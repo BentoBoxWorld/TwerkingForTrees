@@ -2,7 +2,7 @@
 [![Discord](https://img.shields.io/discord/272499714048524288.svg?logo=discord)](https://discord.bentobox.world)
 [![Build Status](https://ci.codemc.org/buildStatus/icon?job=BentoBoxWorld/TwerkingForTrees)](https://ci.codemc.org/job/BentoBoxWorld/job/TwerkingForTrees/)
 
-This is Addon that enables players to grow trees faster by twerking. 
+This is Addon that enables players to grow trees faster by twerking. If you like this or want more, please sponsor!
 
 ## How to use
 
