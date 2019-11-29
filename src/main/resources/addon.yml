@@ -1,0 +1,8 @@
+name: TwerkingForTrees
+main: world.bentobox.twerk.ForTrees
+version: ${version}
+icon: OAK_SAPLING
+
+prefix: TwerkingForTrees
+
+authors: [tastybento]
