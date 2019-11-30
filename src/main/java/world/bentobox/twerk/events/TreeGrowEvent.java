@@ -1,6 +1,7 @@
 package world.bentobox.twerk.events;
 
 import java.util.Collections;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -35,7 +36,7 @@ public class TreeGrowEvent implements Listener {
     private static final Map<Material, TreeType> SAPLING_TO_TREE_TYPE;
     private static final int TWERK_MIN = 4;
     static {
-        Map<Material, TreeType> conv = new HashMap<>();
+        Map<Material, TreeType> conv = new EnumMap<>(Material.class);
         conv.put(Material.ACACIA_SAPLING, TreeType.ACACIA);
         conv.put(Material.BIRCH_SAPLING, TreeType.BIRCH);
         conv.put(Material.DARK_OAK_SAPLING, TreeType.DARK_OAK);
@@ -66,22 +67,19 @@ public class TreeGrowEvent implements Listener {
         }
         , 0L, 40L);
         // Every 20 seconds
-        Bukkit.getScheduler().runTaskTimer(addon.getPlugin(), () -> {
-            plantedTrees.entrySet().stream().filter(e -> isTwerking.contains(e.getValue()))
-            .map(Map.Entry::getKey).forEach(b -> {
-                if (Tag.SAPLINGS.isTagged(b.getType())) {
-                    TreeType type = SAPLING_TO_TREE_TYPE.getOrDefault(b.getType(), TreeType.TREE);
-                    b.setType(Material.AIR);
-                    b.getWorld().generateTree(b.getLocation(), type);
-                    b.getWorld().playEffect(b.getLocation(), Effect.VILLAGER_PLANT_GROW, 2);
-                    b.getWorld().playSound(b.getLocation(), Sound.BLOCK_BUBBLE_COLUMN_UPWARDS_AMBIENT, 1F, 1F);
-                } else {
-                    plantedTrees.remove(b);
-                }
-            });
-        }
-        , 10L, 400L);
-
+        Bukkit.getScheduler().runTaskTimer(addon.getPlugin(), () ->
+        plantedTrees.entrySet().stream().filter(e -> isTwerking.contains(e.getValue()))
+        .map(Map.Entry::getKey).forEach(b -> {
+            if (Tag.SAPLINGS.isTagged(b.getType())) {
+                TreeType type = SAPLING_TO_TREE_TYPE.getOrDefault(b.getType(), TreeType.TREE);
+                b.setType(Material.AIR);
+                b.getWorld().generateTree(b.getLocation(), type);
+                b.getWorld().playEffect(b.getLocation(), Effect.VILLAGER_PLANT_GROW, 2);
+                b.getWorld().playSound(b.getLocation(), Sound.BLOCK_BUBBLE_COLUMN_UPWARDS_AMBIENT, 1F, 1F);
+            } else {
+                plantedTrees.remove(b);
+            }
+        }), 10L, 400L);
     }
 
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
@@ -96,12 +94,12 @@ public class TreeGrowEvent implements Listener {
 
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onTreeBreak(BlockBreakEvent e) {
-        plantedTrees.values().removeIf(e.getBlock()::equals);
+        plantedTrees.keySet().removeIf(e.getBlock()::equals);
     }
 
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onTreeGrow(StructureGrowEvent e) {
-        e.getBlocks().forEach(b -> plantedTrees.values().removeIf(b::equals));
+        e.getBlocks().forEach(b -> plantedTrees.keySet().removeIf(b.getBlock()::equals));
     }
 
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
@@ -111,7 +109,7 @@ public class TreeGrowEvent implements Listener {
         }
         // Get the island
         addon.getIslands().getIslandAt(e.getPlayer().getLocation()).ifPresent(i -> {
-            twerkCount.computeIfAbsent(i, k -> 0);
+            twerkCount.putIfAbsent(i, 0);
             int count = twerkCount.get(i) + 1;
             twerkCount.put(i, count);
             if (count == TWERK_MIN) {
@@ -119,6 +117,4 @@ public class TreeGrowEvent implements Listener {
             }
         });
     }
-
-
 }
