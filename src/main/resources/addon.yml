@@ -1,6 +1,6 @@
 name: TwerkingForTrees
 main: world.bentobox.twerk.ForTrees
-version: ${version}
+version: ${version}${build.number}
 icon: OAK_SAPLING
 
 prefix: TwerkingForTrees
