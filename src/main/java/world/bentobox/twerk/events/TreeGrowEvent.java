@@ -53,7 +53,7 @@ public class TreeGrowEvent implements Listener {
         Map<Material, TreeType> conv = new EnumMap<>(Material.class);
         conv.put(Material.ACACIA_SAPLING, TreeType.ACACIA);
         conv.put(Material.BIRCH_SAPLING, TreeType.BIRCH);
-        conv.put(Material.JUNGLE_SAPLING, TreeType.JUNGLE);
+        conv.put(Material.JUNGLE_SAPLING, TreeType.COCOA_TREE);
         conv.put(Material.OAK_SAPLING, TreeType.TREE);
         conv.put(Material.SPRUCE_SAPLING, TreeType.REDWOOD);
         SAPLING_TO_TREE_TYPE = Collections.unmodifiableMap(conv);
@@ -63,6 +63,7 @@ public class TreeGrowEvent implements Listener {
         Map<Material, TreeType> conv = new EnumMap<>(Material.class);
         conv.put(Material.DARK_OAK_SAPLING, TreeType.DARK_OAK);
         conv.put(Material.SPRUCE_SAPLING, TreeType.MEGA_REDWOOD);
+        conv.put(Material.JUNGLE_SAPLING, TreeType.JUNGLE);
         SAPLING_TO_BIG_TREE_TYPE = Collections.unmodifiableMap(conv);
     }
 
