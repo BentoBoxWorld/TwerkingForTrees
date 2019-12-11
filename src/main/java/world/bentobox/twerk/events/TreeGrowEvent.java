@@ -53,7 +53,7 @@ public class TreeGrowEvent implements Listener {
         Map<Material, TreeType> conv = new EnumMap<>(Material.class);
         conv.put(Material.ACACIA_SAPLING, TreeType.ACACIA);
         conv.put(Material.BIRCH_SAPLING, TreeType.BIRCH);
-        conv.put(Material.JUNGLE_SAPLING, TreeType.COCOA_TREE);
+        conv.put(Material.JUNGLE_SAPLING, TreeType.SMALL_JUNGLE);
         conv.put(Material.OAK_SAPLING, TreeType.TREE);
         conv.put(Material.SPRUCE_SAPLING, TreeType.REDWOOD);
         SAPLING_TO_TREE_TYPE = Collections.unmodifiableMap(conv);
@@ -111,6 +111,7 @@ public class TreeGrowEvent implements Listener {
             b.setType(Material.AIR);
             b.getWorld().generateTree(b.getLocation(), type);
             showSparkles(b);
+            addon.getPlugin().logDebug("Growing 1x1 tree " + type);
             b.getWorld().playSound(b.getLocation(), Sound.BLOCK_BUBBLE_COLUMN_UPWARDS_AMBIENT, 1F, 1F);
         }
     }
@@ -121,6 +122,7 @@ public class TreeGrowEvent implements Listener {
             if (q.stream().map(b::getRelative).allMatch(c -> c.getType().equals(b.getType()))) {
                 // All the same sapling type found in this quad
                 q.stream().map(b::getRelative).forEach(c -> c.setType(Material.AIR));
+                addon.getPlugin().logDebug("Growing big tree");
                 // Get the tree planting location
                 Location l = b.getRelative(q.get(0)).getLocation();
                 b.getWorld().generateTree(l, type);
