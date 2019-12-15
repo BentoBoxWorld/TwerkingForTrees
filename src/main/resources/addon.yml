@@ -1,5 +1,5 @@
 name: TwerkingForTrees
-main: world.bentobox.twerk.ForTrees
+main: world.bentobox.twerk.TwerkingForTrees
 version: ${version}${build.number}
 icon: OAK_SAPLING
 

@@ -3,7 +3,7 @@ package world.bentobox.twerk;
 import world.bentobox.bentobox.api.addons.Addon;
 import world.bentobox.twerk.events.TreeGrowEvent;
 
-public final class ForTrees extends Addon {
+public final class TwerkingForTrees extends Addon {
 
     @Override
     public void onLoad() {

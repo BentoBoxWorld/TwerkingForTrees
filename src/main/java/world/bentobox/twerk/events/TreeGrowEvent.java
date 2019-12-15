@@ -30,7 +30,7 @@ import org.eclipse.jdt.annotation.NonNull;
 
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.util.Util;
-import world.bentobox.twerk.ForTrees;
+import world.bentobox.twerk.TwerkingForTrees;
 
 public class TreeGrowEvent implements Listener {
 
@@ -67,12 +67,12 @@ public class TreeGrowEvent implements Listener {
         SAPLING_TO_BIG_TREE_TYPE = Collections.unmodifiableMap(conv);
     }
 
-    private ForTrees addon;
+    private TwerkingForTrees addon;
     private Map<Island, Integer> twerkCount;
     private Set<Island> isTwerking;
     private Map<Block, Island> plantedTrees;
 
-    public TreeGrowEvent(@NonNull ForTrees addon) {
+    public TreeGrowEvent(@NonNull TwerkingForTrees addon) {
         this.addon = addon;
         twerkCount = new HashMap<>();
         isTwerking = new HashSet<>();
