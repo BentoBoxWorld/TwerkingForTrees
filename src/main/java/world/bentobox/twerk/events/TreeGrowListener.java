@@ -44,7 +44,6 @@ public class TreeGrowListener implements Listener {
     private static final List<BlockFace> AROUND  = Arrays.asList(BlockFace.NORTH, BlockFace.EAST, BlockFace.NORTH_EAST,
             BlockFace.SOUTH, BlockFace.WEST, BlockFace.NORTH_WEST, BlockFace.SOUTH_EAST, BlockFace.SOUTH_WEST);
 
-    private static final int TWERK_MIN = 4;
     /**
      * Converts between sapling and tree type. Why doesn't this API exist already I wonder?
      */
@@ -83,7 +82,7 @@ public class TreeGrowListener implements Listener {
     private void runChecker() {
         // Every two seconds
         Bukkit.getScheduler().runTaskTimer(addon.getPlugin(), () -> {
-            isTwerking = twerkCount.entrySet().stream().filter(e -> e.getValue() > TWERK_MIN).map(Map.Entry::getKey).collect(Collectors.toSet());
+            isTwerking = twerkCount.entrySet().stream().filter(e -> e.getValue() > addon.getSettings().getMinimumTwerks()).map(Map.Entry::getKey).collect(Collectors.toSet());
             twerkCount.clear();
             plantedTrees.keySet().removeIf(k -> !Tag.SAPLINGS.isTagged(k.getType()));
         }
@@ -110,9 +109,14 @@ public class TreeGrowListener implements Listener {
             TreeType type = SAPLING_TO_TREE_TYPE.getOrDefault(b.getType(), TreeType.TREE);
             b.setType(Material.AIR);
             b.getWorld().generateTree(b.getLocation(), type);
-            showSparkles(b);
+            if (addon.getSettings().isEffectsEnabled()) {
+                showSparkles(b);
+            }
             addon.getPlugin().logDebug("Growing 1x1 tree " + type);
-            b.getWorld().playSound(b.getLocation(), Sound.BLOCK_BUBBLE_COLUMN_UPWARDS_AMBIENT, 1F, 1F);
+            if (addon.getSettings().isSoundsEnabled()) {
+                b.getWorld().playSound(b.getLocation(), addon.getSettings().getSoundsGrowingSmallTreeSound(),
+                        addon.getSettings().getSoundsGrowingSmallTreeVolume(), addon.getSettings().getSoundsGrowingSmallTreePitch());
+            }
         }
     }
 
@@ -126,8 +130,13 @@ public class TreeGrowListener implements Listener {
                 // Get the tree planting location
                 Location l = b.getRelative(q.get(0)).getLocation();
                 b.getWorld().generateTree(l, type);
-                showSparkles(b);
-                b.getWorld().playSound(b.getLocation(), Sound.BLOCK_BUBBLE_COLUMN_UPWARDS_AMBIENT, 1F, 1F);
+                if (addon.getSettings().isEffectsEnabled()) {
+                    showSparkles(b);
+                }
+                if (addon.getSettings().isSoundsEnabled()) {
+                    b.getWorld().playSound(b.getLocation(), addon.getSettings().getSoundsGrowingBigTreeSound(),
+                            addon.getSettings().getSoundsGrowingBigTreeVolume(), addon.getSettings().getSoundsGrowingBigTreePitch());
+                }
                 return true;
             }
         }
@@ -135,7 +144,7 @@ public class TreeGrowListener implements Listener {
     }
 
     private void showSparkles(Block b) {
-        AROUND.stream().map(b::getRelative).map(Block::getLocation).forEach(x -> x.getWorld().playEffect(x, Effect.MOBSPAWNER_FLAMES, 0));
+        AROUND.stream().map(b::getRelative).map(Block::getLocation).forEach(x -> x.getWorld().playEffect(x, addon.getSettings().getEffectsTwerk(), 0));
     }
 
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
@@ -169,8 +178,9 @@ public class TreeGrowListener implements Listener {
             twerkCount.putIfAbsent(i, 0);
             int count = twerkCount.get(i) + 1;
             twerkCount.put(i, count);
-            if (count == TWERK_MIN) {
-                e.getPlayer().playSound(e.getPlayer().getLocation(), Sound.BLOCK_NOTE_BLOCK_BASS, 1F, 2F);
+            if (count == addon.getSettings().getMinimumTwerks()) {
+                e.getPlayer().playSound(e.getPlayer().getLocation(), addon.getSettings().getSoundsTwerkSound(),
+                        addon.getSettings().getSoundsTwerkVolume(), addon.getSettings().getSoundsTwerkPitch());
             }
         });
     }
