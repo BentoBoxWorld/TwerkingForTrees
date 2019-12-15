@@ -32,7 +32,7 @@ import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.util.Util;
 import world.bentobox.twerk.TwerkingForTrees;
 
-public class TreeGrowEvent implements Listener {
+public class TreeGrowListener implements Listener {
 
     // The first entry in the list of the quads is where the big tree should be planted - always most positive x and z.
     private static final List<BlockFace> QUAD1 = Arrays.asList(BlockFace.NORTH, BlockFace.EAST, BlockFace.NORTH_EAST, BlockFace.SELF);
@@ -72,7 +72,7 @@ public class TreeGrowEvent implements Listener {
     private Set<Island> isTwerking;
     private Map<Block, Island> plantedTrees;
 
-    public TreeGrowEvent(@NonNull TwerkingForTrees addon) {
+    public TreeGrowListener(@NonNull TwerkingForTrees addon) {
         this.addon = addon;
         twerkCount = new HashMap<>();
         isTwerking = new HashSet<>();

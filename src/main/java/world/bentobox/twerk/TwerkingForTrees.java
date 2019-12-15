@@ -1,7 +1,7 @@
 package world.bentobox.twerk;
 
 import world.bentobox.bentobox.api.addons.Addon;
-import world.bentobox.twerk.events.TreeGrowEvent;
+import world.bentobox.twerk.events.TreeGrowListener;
 
 public final class TwerkingForTrees extends Addon {
 
@@ -13,7 +13,7 @@ public final class TwerkingForTrees extends Addon {
     @Override
     public void onEnable() {
         // Register listener
-        registerListener(new TreeGrowEvent(this));
+        registerListener(new TreeGrowListener(this));
     }
 
     @Override
