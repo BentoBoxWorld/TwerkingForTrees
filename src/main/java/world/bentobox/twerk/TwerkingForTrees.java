@@ -2,7 +2,7 @@ package world.bentobox.twerk;
 
 import world.bentobox.bentobox.api.addons.Addon;
 import world.bentobox.bentobox.api.configuration.Config;
-import world.bentobox.twerk.events.TreeGrowListener;
+import world.bentobox.twerk.listeners.TreeGrowListener;
 
 public final class TwerkingForTrees extends Addon {
 

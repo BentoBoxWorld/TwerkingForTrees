@@ -1,4 +1,4 @@
-package world.bentobox.twerk.events;
+package world.bentobox.twerk.listeners;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -11,10 +11,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
-import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.Sound;
 import org.bukkit.Tag;
 import org.bukkit.TreeType;
 import org.bukkit.block.Block;
@@ -175,6 +173,11 @@ public class TreeGrowListener implements Listener {
         }
         // Get the island
         addon.getIslands().getIslandAt(e.getPlayer().getLocation()).ifPresent(i -> {
+            // Check if there are any planted saplings on the island
+            if (!plantedTrees.values().contains(i)) {
+                // None, so return
+                return;
+            }
             twerkCount.putIfAbsent(i, 0);
             int count = twerkCount.get(i) + 1;
             twerkCount.put(i, count);
