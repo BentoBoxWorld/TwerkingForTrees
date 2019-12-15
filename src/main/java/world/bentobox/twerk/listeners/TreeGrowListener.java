@@ -97,23 +97,27 @@ public class TreeGrowListener implements Listener {
     }
 
     private void growTree(Block b) {
-        if (!Tag.SAPLINGS.isTagged(b.getType())) {
+        Material t = b.getType();
+        if (!Tag.SAPLINGS.isTagged(t)) {
             return;
         }
         // Try to grow big tree if possible
-        if (SAPLING_TO_BIG_TREE_TYPE.containsKey(b.getType()) && bigTreeSaplings(b)) {
+        if (SAPLING_TO_BIG_TREE_TYPE.containsKey(t) && bigTreeSaplings(b)) {
             return;
-        } else if (SAPLING_TO_TREE_TYPE.containsKey(b.getType())) {
+        } else if (SAPLING_TO_TREE_TYPE.containsKey(t)) {
             TreeType type = SAPLING_TO_TREE_TYPE.getOrDefault(b.getType(), TreeType.TREE);
             b.setType(Material.AIR);
-            b.getWorld().generateTree(b.getLocation(), type);
-            if (addon.getSettings().isEffectsEnabled()) {
-                showSparkles(b);
-            }
-            addon.getPlugin().logDebug("Growing 1x1 tree " + type);
-            if (addon.getSettings().isSoundsEnabled()) {
-                b.getWorld().playSound(b.getLocation(), addon.getSettings().getSoundsGrowingSmallTreeSound(),
-                        addon.getSettings().getSoundsGrowingSmallTreeVolume(), addon.getSettings().getSoundsGrowingSmallTreePitch());
+            if (b.getWorld().generateTree(b.getLocation(), type)) {
+                if (addon.getSettings().isEffectsEnabled()) {
+                    showSparkles(b);
+                }
+                if (addon.getSettings().isSoundsEnabled()) {
+                    b.getWorld().playSound(b.getLocation(), addon.getSettings().getSoundsGrowingSmallTreeSound(),
+                            addon.getSettings().getSoundsGrowingSmallTreeVolume(), addon.getSettings().getSoundsGrowingSmallTreePitch());
+                }
+            } else {
+                // Tree generation failed, so reset block
+                b.setType(t);
             }
         }
     }
@@ -124,18 +128,21 @@ public class TreeGrowListener implements Listener {
             if (q.stream().map(b::getRelative).allMatch(c -> c.getType().equals(b.getType()))) {
                 // All the same sapling type found in this quad
                 q.stream().map(b::getRelative).forEach(c -> c.setType(Material.AIR));
-                addon.getPlugin().logDebug("Growing big tree");
                 // Get the tree planting location
                 Location l = b.getRelative(q.get(0)).getLocation();
-                b.getWorld().generateTree(l, type);
-                if (addon.getSettings().isEffectsEnabled()) {
-                    showSparkles(b);
+                if (b.getWorld().generateTree(l, type)) {
+                    if (addon.getSettings().isEffectsEnabled()) {
+                        showSparkles(b);
+                    }
+                    if (addon.getSettings().isSoundsEnabled()) {
+                        b.getWorld().playSound(b.getLocation(), addon.getSettings().getSoundsGrowingBigTreeSound(),
+                                addon.getSettings().getSoundsGrowingBigTreeVolume(), addon.getSettings().getSoundsGrowingBigTreePitch());
+                    }
+                    return true;
+                } else {
+                    // Generation failed, reset saplings
+                    q.stream().map(b::getRelative).forEach(c -> c.setType(b.getType()));
                 }
-                if (addon.getSettings().isSoundsEnabled()) {
-                    b.getWorld().playSound(b.getLocation(), addon.getSettings().getSoundsGrowingBigTreeSound(),
-                            addon.getSettings().getSoundsGrowingBigTreeVolume(), addon.getSettings().getSoundsGrowingBigTreePitch());
-                }
-                return true;
             }
         }
         return false;
