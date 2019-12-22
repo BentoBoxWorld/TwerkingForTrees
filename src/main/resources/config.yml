@@ -1,4 +1,4 @@
-# TwerkingForTrees v1.1.0 configuration file.
+# TwerkingForTrees configuration file.
 #
 # How many times the player must twerk before the tree start growing faster.
 # If the player has not twerked enough, then the tree will not grow faster.

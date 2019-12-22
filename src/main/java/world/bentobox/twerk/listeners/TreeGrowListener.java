@@ -113,7 +113,7 @@ public class TreeGrowListener implements Listener {
                 }
                 if (addon.getSettings().isSoundsEnabled()) {
                     b.getWorld().playSound(b.getLocation(), addon.getSettings().getSoundsGrowingSmallTreeSound(),
-                            addon.getSettings().getSoundsGrowingSmallTreeVolume(), addon.getSettings().getSoundsGrowingSmallTreePitch());
+                            (float)addon.getSettings().getSoundsGrowingSmallTreeVolume(), (float)addon.getSettings().getSoundsGrowingSmallTreePitch());
                 }
             } else {
                 // Tree generation failed, so reset block
@@ -136,7 +136,7 @@ public class TreeGrowListener implements Listener {
                     }
                     if (addon.getSettings().isSoundsEnabled()) {
                         b.getWorld().playSound(b.getLocation(), addon.getSettings().getSoundsGrowingBigTreeSound(),
-                                addon.getSettings().getSoundsGrowingBigTreeVolume(), addon.getSettings().getSoundsGrowingBigTreePitch());
+                                (float)addon.getSettings().getSoundsGrowingBigTreeVolume(), (float)addon.getSettings().getSoundsGrowingBigTreePitch());
                     }
                     return true;
                 } else {
@@ -190,7 +190,7 @@ public class TreeGrowListener implements Listener {
             twerkCount.put(i, count);
             if (count == addon.getSettings().getMinimumTwerks()) {
                 e.getPlayer().playSound(e.getPlayer().getLocation(), addon.getSettings().getSoundsTwerkSound(),
-                        addon.getSettings().getSoundsTwerkVolume(), addon.getSettings().getSoundsTwerkPitch());
+                        (float)addon.getSettings().getSoundsTwerkVolume(), (float)addon.getSettings().getSoundsTwerkPitch());
             }
         });
     }

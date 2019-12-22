@@ -31,10 +31,10 @@ public class Settings implements ConfigObject {
     private Sound soundsTwerkSound = Sound.BLOCK_NOTE_BLOCK_BASS;
 
     @ConfigEntry(path = "sounds.twerk.volume")
-    private float soundsTwerkVolume = 1.0F;
+    private double soundsTwerkVolume = 1.0F;
 
     @ConfigEntry(path = "sounds.twerk.pitch")
-    private float soundsTwerkPitch = 2.0F;
+    private double soundsTwerkPitch = 2.0F;
 
     @ConfigComment("Sound that plays when a small tree (1x1) grows.")
     @ConfigComment("Available sounds are the following:")
@@ -43,10 +43,10 @@ public class Settings implements ConfigObject {
     private Sound soundsGrowingSmallTreeSound = Sound.BLOCK_BUBBLE_COLUMN_UPWARDS_AMBIENT;
 
     @ConfigEntry(path = "sounds.growing-small-tree.volume")
-    private float soundsGrowingSmallTreeVolume = 1.0F;
+    private double soundsGrowingSmallTreeVolume = 1.0F;
 
     @ConfigEntry(path = "sounds.growing-small-tree.pitch")
-    private float soundsGrowingSmallTreePitch = 1.0F;
+    private double soundsGrowingSmallTreePitch = 1.0F;
 
     @ConfigComment("Sound that plays when a big tree (2x2) grows.")
     @ConfigComment("Available sounds are the following:")
@@ -55,10 +55,10 @@ public class Settings implements ConfigObject {
     private Sound soundsGrowingBigTreeSound = Sound.BLOCK_BUBBLE_COLUMN_UPWARDS_AMBIENT;
 
     @ConfigEntry(path = "sounds.growing-big-tree.volume")
-    private float soundsGrowingBigTreeVolume = 1.0F;
+    private double soundsGrowingBigTreeVolume = 1.0F;
 
     @ConfigEntry(path = "sounds.growing-big-tree.pitch")
-    private float soundsGrowingBigTreePitch = 1.0F;
+    private double soundsGrowingBigTreePitch = 1.0F;
 
     @ConfigComment("Toggle on/off the particle effects.")
     @ConfigEntry(path = "effects.enabled")
@@ -94,19 +94,19 @@ public class Settings implements ConfigObject {
         this.soundsTwerkSound = soundsTwerkSound;
     }
 
-    public float getSoundsTwerkVolume() {
+    public double getSoundsTwerkVolume() {
         return soundsTwerkVolume;
     }
 
-    public void setSoundsTwerkVolume(float soundsTwerkVolume) {
+    public void setSoundsTwerkVolume(double soundsTwerkVolume) {
         this.soundsTwerkVolume = soundsTwerkVolume;
     }
 
-    public float getSoundsTwerkPitch() {
+    public double getSoundsTwerkPitch() {
         return soundsTwerkPitch;
     }
 
-    public void setSoundsTwerkPitch(float soundsTwerkPitch) {
+    public void setSoundsTwerkPitch(double soundsTwerkPitch) {
         this.soundsTwerkPitch = soundsTwerkPitch;
     }
 
@@ -118,19 +118,19 @@ public class Settings implements ConfigObject {
         this.soundsGrowingSmallTreeSound = soundsGrowingSmallTreeSound;
     }
 
-    public float getSoundsGrowingSmallTreeVolume() {
+    public double getSoundsGrowingSmallTreeVolume() {
         return soundsGrowingSmallTreeVolume;
     }
 
-    public void setSoundsGrowingSmallTreeVolume(float soundsGrowingSmallTreeVolume) {
+    public void setSoundsGrowingSmallTreeVolume(double soundsGrowingSmallTreeVolume) {
         this.soundsGrowingSmallTreeVolume = soundsGrowingSmallTreeVolume;
     }
 
-    public float getSoundsGrowingSmallTreePitch() {
+    public double getSoundsGrowingSmallTreePitch() {
         return soundsGrowingSmallTreePitch;
     }
 
-    public void setSoundsGrowingSmallTreePitch(float soundsGrowingSmallTreePitch) {
+    public void setSoundsGrowingSmallTreePitch(double soundsGrowingSmallTreePitch) {
         this.soundsGrowingSmallTreePitch = soundsGrowingSmallTreePitch;
     }
 
@@ -142,19 +142,19 @@ public class Settings implements ConfigObject {
         this.soundsGrowingBigTreeSound = soundsGrowingBigTreeSound;
     }
 
-    public float getSoundsGrowingBigTreeVolume() {
+    public double getSoundsGrowingBigTreeVolume() {
         return soundsGrowingBigTreeVolume;
     }
 
-    public void setSoundsGrowingBigTreeVolume(float soundsGrowingBigTreeVolume) {
+    public void setSoundsGrowingBigTreeVolume(double soundsGrowingBigTreeVolume) {
         this.soundsGrowingBigTreeVolume = soundsGrowingBigTreeVolume;
     }
 
-    public float getSoundsGrowingBigTreePitch() {
+    public double getSoundsGrowingBigTreePitch() {
         return soundsGrowingBigTreePitch;
     }
 
-    public void setSoundsGrowingBigTreePitch(float soundsGrowingBigTreePitch) {
+    public void setSoundsGrowingBigTreePitch(double soundsGrowingBigTreePitch) {
         this.soundsGrowingBigTreePitch = soundsGrowingBigTreePitch;
     }
 
