@@ -15,6 +15,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Tag;
 import org.bukkit.TreeType;
+import org.bukkit.World.Environment;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.event.EventHandler;
@@ -77,7 +78,7 @@ public class TreeGrowListener implements Listener {
         runChecker();
     }
 
-    private void runChecker() {
+    protected void runChecker() {
         // Every two seconds
         Bukkit.getScheduler().runTaskTimer(addon.getPlugin(), () -> {
             isTwerking = twerkCount.entrySet().stream().filter(e -> e.getValue() > addon.getSettings().getMinimumTwerks()).map(Map.Entry::getKey).collect(Collectors.toSet());
@@ -96,7 +97,7 @@ public class TreeGrowListener implements Listener {
         , 10L, 400L);
     }
 
-    private void growTree(Block b) {
+    protected void growTree(Block b) {
         Material t = b.getType();
         if (!Tag.SAPLINGS.isTagged(t)) {
             return;
@@ -122,7 +123,7 @@ public class TreeGrowListener implements Listener {
         }
     }
 
-    private boolean bigTreeSaplings(Block b) {
+    protected boolean bigTreeSaplings(Block b) {
         TreeType type = SAPLING_TO_BIG_TREE_TYPE.get(b.getType());
         for (List<BlockFace> q : QUADS) {
             if (q.stream().map(b::getRelative).allMatch(c -> c.getType().equals(b.getType()))) {
@@ -148,13 +149,14 @@ public class TreeGrowListener implements Listener {
         return false;
     }
 
-    private void showSparkles(Block b) {
+    protected void showSparkles(Block b) {
         AROUND.stream().map(b::getRelative).map(Block::getLocation).forEach(x -> x.getWorld().playEffect(x, addon.getSettings().getEffectsTwerk(), 0));
     }
 
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onTreePlant(BlockPlaceEvent e) {
-        if (!addon.getPlugin().getIWM().inWorld(Util.getWorld(e.getBlock().getWorld()))
+        if (!e.getBlock().getWorld().getEnvironment().equals(Environment.NORMAL)
+                || !addon.getPlugin().getIWM().inWorld(Util.getWorld(e.getBlock().getWorld()))
                 || !Tag.SAPLINGS.isTagged(e.getBlock().getType())) {
             return;
         }
@@ -174,7 +176,8 @@ public class TreeGrowListener implements Listener {
 
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onTwerk(PlayerToggleSneakEvent e) {
-        if (!addon.getPlugin().getIWM().inWorld(Util.getWorld(e.getPlayer().getWorld()))
+        if (!e.getPlayer().getWorld().getEnvironment().equals(Environment.NORMAL)
+                || !addon.getPlugin().getIWM().inWorld(Util.getWorld(e.getPlayer().getWorld()))
                 || e.getPlayer().isFlying()) {
             return;
         }
