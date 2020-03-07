@@ -195,7 +195,7 @@ public class TreeGrowListener implements Listener {
             if (count == addon.getSettings().getMinimumTwerks()) {
                 e.getPlayer().playSound(e.getPlayer().getLocation(), addon.getSettings().getSoundsTwerkSound(),
                         (float)addon.getSettings().getSoundsTwerkVolume(), (float)addon.getSettings().getSoundsTwerkPitch());
-                e.getPlayer().spawnParticle(Particle.SPELL, e.getPlayer().getLocation(), count, 3D, 0D, 3D);
+                e.getPlayer().spawnParticle(Particle.SPELL, e.getPlayer().getLocation(), 20, 3D, 0D, 3D);
             }
         });
     }
