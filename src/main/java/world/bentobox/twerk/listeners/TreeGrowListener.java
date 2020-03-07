@@ -93,11 +93,11 @@ public class TreeGrowListener implements Listener {
         .stream()
         .filter(e -> isTwerking.contains(e.getValue()))
         .map(Map.Entry::getKey)
-        .forEach(this::growTree)
+        .forEach(b -> Util.getChunkAtAsync(b.getLocation()).thenRun(() -> growTree(b)))
         , 10L, 400L);
     }
 
-    protected void growTree(Block b) {
+    protected void growTree(Block b) {        
         Material t = b.getType();
         if (!Tag.SAPLINGS.isTagged(t)) {
             return;
