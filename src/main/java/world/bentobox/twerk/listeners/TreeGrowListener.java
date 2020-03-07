@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Particle;
 import org.bukkit.Tag;
 import org.bukkit.TreeType;
 import org.bukkit.World.Environment;
@@ -97,7 +98,7 @@ public class TreeGrowListener implements Listener {
         , 10L, 400L);
     }
 
-    protected void growTree(Block b) {        
+    protected void growTree(Block b) {
         Material t = b.getType();
         if (!Tag.SAPLINGS.isTagged(t)) {
             return;
@@ -194,6 +195,7 @@ public class TreeGrowListener implements Listener {
             if (count == addon.getSettings().getMinimumTwerks()) {
                 e.getPlayer().playSound(e.getPlayer().getLocation(), addon.getSettings().getSoundsTwerkSound(),
                         (float)addon.getSettings().getSoundsTwerkVolume(), (float)addon.getSettings().getSoundsTwerkPitch());
+                e.getPlayer().spawnParticle(Particle.SPELL, e.getPlayer().getLocation(), count, 3D, 0D, 3D);
             }
         });
     }
