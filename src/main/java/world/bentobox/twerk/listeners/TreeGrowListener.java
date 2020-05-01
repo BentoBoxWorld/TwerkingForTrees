@@ -19,11 +19,11 @@ import org.bukkit.TreeType;
 import org.bukkit.World.Environment;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
 import org.bukkit.event.world.StructureGrowEvent;
 import org.eclipse.jdt.annotation.NonNull;
@@ -154,6 +154,7 @@ public class TreeGrowListener implements Listener {
         AROUND.stream().map(b::getRelative).map(Block::getLocation).forEach(x -> x.getWorld().playEffect(x, addon.getSettings().getEffectsTwerk(), 0));
     }
 
+    /*
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onTreePlant(BlockPlaceEvent e) {
         if (!e.getBlock().getWorld().getEnvironment().equals(Environment.NORMAL)
@@ -164,7 +165,7 @@ public class TreeGrowListener implements Listener {
         // Add Sapling
         addon.getIslands().getIslandAt(e.getBlock().getLocation()).ifPresent(i -> plantedTrees.put(e.getBlock(), i));
     }
-
+*/
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onTreeBreak(BlockBreakEvent e) {
         plantedTrees.keySet().removeIf(e.getBlock()::equals);
@@ -184,11 +185,16 @@ public class TreeGrowListener implements Listener {
         }
         // Get the island
         addon.getIslands().getIslandAt(e.getPlayer().getLocation()).ifPresent(i -> {
-            // Check if there are any planted saplings on the island
+            // Check if there are any planted saplings around player
+            if (!twerkCount.containsKey(i) || twerkCount.get(i) == 0) {
+                // New twerking effort
+                getNearbySaplings(e.getPlayer(), i);                
+            }
             if (!plantedTrees.values().contains(i)) {
                 // None, so return
                 return;
             }
+            
             twerkCount.putIfAbsent(i, 0);
             int count = twerkCount.get(i) + 1;
             twerkCount.put(i, count);
@@ -198,5 +204,20 @@ public class TreeGrowListener implements Listener {
                 e.getPlayer().spawnParticle(Particle.SPELL, e.getPlayer().getLocation(), 20, 3D, 0D, 3D);
             }
         });
+    }
+
+    private void getNearbySaplings(Player player, Island i) {
+        int range = addon.getSettings().getRange();
+        for (int x = player.getLocation().getBlockX() - range ; x <= player.getLocation().getBlockX() + range; x++) {
+            for (int y = player.getLocation().getBlockY() - range ; y <= player.getLocation().getBlockY() + range; y++) {
+                for (int z = player.getLocation().getBlockZ() - range ; z <= player.getLocation().getBlockZ() + range; z++) {
+                    Block block = player.getWorld().getBlockAt(x, y, z);
+                    if (Tag.SAPLINGS.isTagged(block.getType())) {
+                        plantedTrees.put(block, i);
+                    }
+                }  
+            } 
+        }
+        
     }
 }

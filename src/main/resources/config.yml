@@ -3,6 +3,9 @@
 # How many times the player must twerk before the tree start growing faster.
 # If the player has not twerked enough, then the tree will not grow faster.
 minimum-twerks: 4
+# Range to look for saplings when twerking. A range of 5 will look +/- 5 blocks in all directions around the player
+# Making this too big will lag your server.
+range: 5
 sounds:
   # Toggle on/off the sounds.
   enabled: true
