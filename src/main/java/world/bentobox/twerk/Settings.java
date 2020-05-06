@@ -2,6 +2,7 @@ package world.bentobox.twerk;
 
 import org.bukkit.Effect;
 import org.bukkit.Sound;
+
 import world.bentobox.bentobox.api.configuration.ConfigComment;
 import world.bentobox.bentobox.api.configuration.ConfigEntry;
 import world.bentobox.bentobox.api.configuration.ConfigObject;
@@ -19,6 +20,11 @@ public class Settings implements ConfigObject {
     @ConfigComment("If the player has not twerked enough, then the tree will not grow faster.")
     @ConfigEntry(path = "minimum-twerks")
     private int minimumTwerks = 4;
+    
+    @ConfigComment("Range to look for saplings when twerking. A range of 5 will look +/- 5 blocks in all directions around the player")
+    @ConfigComment("Making this too big will lag your server.")
+    @ConfigEntry(path = "range")
+    private int range = 5;
 
     @ConfigComment("Toggle on/off the sounds.")
     @ConfigEntry(path = "sounds.enabled")
@@ -172,5 +178,22 @@ public class Settings implements ConfigObject {
 
     public void setEffectsTwerk(Effect effectsTwerk) {
         this.effectsTwerk = effectsTwerk;
+    }
+
+    /**
+     * @return the range
+     */
+    public int getRange() {
+        if (range < 0) {
+            range = 0;
+        }
+        return range;
+    }
+
+    /**
+     * @param range the range to set
+     */
+    public void setRange(int range) {
+        this.range = range;
     }
 }
