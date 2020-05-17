@@ -125,9 +125,10 @@ public class TreeGrowListener implements Listener {
     }
 
     protected boolean bigTreeSaplings(Block b) {
-        TreeType type = SAPLING_TO_BIG_TREE_TYPE.get(b.getType());
+        Material treeType = b.getType();
+        TreeType type = SAPLING_TO_BIG_TREE_TYPE.get(treeType);
         for (List<BlockFace> q : QUADS) {
-            if (q.stream().map(b::getRelative).allMatch(c -> c.getType().equals(b.getType()))) {
+            if (q.stream().map(b::getRelative).allMatch(c -> c.getType().equals(treeType))) {
                 // All the same sapling type found in this quad
                 q.stream().map(b::getRelative).forEach(c -> c.setType(Material.AIR));
                 // Get the tree planting location
@@ -143,7 +144,7 @@ public class TreeGrowListener implements Listener {
                     return true;
                 } else {
                     // Generation failed, reset saplings
-                    q.stream().map(b::getRelative).forEach(c -> c.setType(b.getType()));
+                    q.stream().map(b::getRelative).forEach(c -> c.setType(treeType));
                 }
             }
         }
@@ -165,7 +166,7 @@ public class TreeGrowListener implements Listener {
         // Add Sapling
         addon.getIslands().getIslandAt(e.getBlock().getLocation()).ifPresent(i -> plantedTrees.put(e.getBlock(), i));
     }
-*/
+     */
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onTreeBreak(BlockBreakEvent e) {
         plantedTrees.keySet().removeIf(e.getBlock()::equals);
@@ -188,13 +189,13 @@ public class TreeGrowListener implements Listener {
             // Check if there are any planted saplings around player
             if (!twerkCount.containsKey(i) || twerkCount.get(i) == 0) {
                 // New twerking effort
-                getNearbySaplings(e.getPlayer(), i);                
+                getNearbySaplings(e.getPlayer(), i);
             }
             if (!plantedTrees.values().contains(i)) {
                 // None, so return
                 return;
             }
-            
+
             twerkCount.putIfAbsent(i, 0);
             int count = twerkCount.get(i) + 1;
             twerkCount.put(i, count);
@@ -215,9 +216,9 @@ public class TreeGrowListener implements Listener {
                     if (Tag.SAPLINGS.isTagged(block.getType())) {
                         plantedTrees.put(block, i);
                     }
-                }  
-            } 
+                }
+            }
         }
-        
+
     }
 }
