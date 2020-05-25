@@ -155,18 +155,6 @@ public class TreeGrowListener implements Listener {
         AROUND.stream().map(b::getRelative).map(Block::getLocation).forEach(x -> x.getWorld().playEffect(x, addon.getSettings().getEffectsTwerk(), 0));
     }
 
-    /*
-    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
-    public void onTreePlant(BlockPlaceEvent e) {
-        if (!e.getBlock().getWorld().getEnvironment().equals(Environment.NORMAL)
-                || !addon.getPlugin().getIWM().inWorld(Util.getWorld(e.getBlock().getWorld()))
-                || !Tag.SAPLINGS.isTagged(e.getBlock().getType())) {
-            return;
-        }
-        // Add Sapling
-        addon.getIslands().getIslandAt(e.getBlock().getLocation()).ifPresent(i -> plantedTrees.put(e.getBlock(), i));
-    }
-     */
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onTreeBreak(BlockBreakEvent e) {
         plantedTrees.keySet().removeIf(e.getBlock()::equals);
@@ -181,7 +169,8 @@ public class TreeGrowListener implements Listener {
     public void onTwerk(PlayerToggleSneakEvent e) {
         if (!e.getPlayer().getWorld().getEnvironment().equals(Environment.NORMAL)
                 || !addon.getPlugin().getIWM().inWorld(Util.getWorld(e.getPlayer().getWorld()))
-                || e.getPlayer().isFlying()) {
+                || e.getPlayer().isFlying()
+                || !e.getPlayer().hasPermission(addon.getPlugin().getIWM().getPermissionPrefix(e.getPlayer().getWorld()) + "twerkingfortrees")) {
             return;
         }
         // Get the island

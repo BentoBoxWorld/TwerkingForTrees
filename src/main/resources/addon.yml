@@ -2,7 +2,13 @@ name: TwerkingForTrees
 main: world.bentobox.twerk.TwerkingForTrees
 version: ${version}${build.number}
 icon: OAK_SAPLING
+api: 1.13
 
 prefix: TwerkingForTrees
 
 authors: [tastybento]
+
+permissions:
+  '[gamemode].twerkingfortrees':
+    description: Player can twerk for trees.
+    default: true
