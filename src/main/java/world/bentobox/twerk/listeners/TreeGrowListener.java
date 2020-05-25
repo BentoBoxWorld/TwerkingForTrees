@@ -109,7 +109,7 @@ public class TreeGrowListener implements Listener {
         } else if (SAPLING_TO_TREE_TYPE.containsKey(t)) {
             TreeType type = SAPLING_TO_TREE_TYPE.getOrDefault(b.getType(), TreeType.TREE);
             b.setType(Material.AIR);
-            if (b.getWorld().generateTree(b.getLocation(), type)) {
+            if (b.getWorld().generateTree(b.getLocation(), type, new BlockChangeHandler(addon, b.getWorld()))) {
                 if (addon.getSettings().isEffectsEnabled()) {
                     showSparkles(b);
                 }
@@ -133,7 +133,7 @@ public class TreeGrowListener implements Listener {
                 q.stream().map(b::getRelative).forEach(c -> c.setType(Material.AIR));
                 // Get the tree planting location
                 Location l = b.getRelative(q.get(0)).getLocation();
-                if (b.getWorld().generateTree(l, type)) {
+                if (b.getWorld().generateTree(l, type, new BlockChangeHandler(addon, b.getWorld()))) {
                     if (addon.getSettings().isEffectsEnabled()) {
                         showSparkles(b);
                     }
