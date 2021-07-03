@@ -1,6 +1,5 @@
 package world.bentobox.twerk;
 
-import org.bukkit.Effect;
 import org.bukkit.Sound;
 
 import world.bentobox.bentobox.api.configuration.ConfigComment;
@@ -20,7 +19,7 @@ public class Settings implements ConfigObject {
     @ConfigComment("If the player has not twerked enough, then the tree will not grow faster.")
     @ConfigEntry(path = "minimum-twerks")
     private int minimumTwerks = 4;
-    
+
     @ConfigComment("Range to look for saplings when twerking. A range of 5 will look +/- 5 blocks in all directions around the player")
     @ConfigComment("Making this too big will lag your server.")
     @ConfigEntry(path = "range")
@@ -42,142 +41,92 @@ public class Settings implements ConfigObject {
     @ConfigEntry(path = "sounds.twerk.pitch")
     private double soundsTwerkPitch = 2.0F;
 
-    @ConfigComment("Sound that plays when a small tree (1x1) grows.")
-    @ConfigComment("Available sounds are the following:")
-    @ConfigComment("   https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Sound.html")
-    @ConfigEntry(path = "sounds.growing-small-tree.sound")
-    private Sound soundsGrowingSmallTreeSound = Sound.BLOCK_BUBBLE_COLUMN_UPWARDS_AMBIENT;
-
-    @ConfigEntry(path = "sounds.growing-small-tree.volume")
-    private double soundsGrowingSmallTreeVolume = 1.0F;
-
-    @ConfigEntry(path = "sounds.growing-small-tree.pitch")
-    private double soundsGrowingSmallTreePitch = 1.0F;
-
-    @ConfigComment("Sound that plays when a big tree (2x2) grows.")
-    @ConfigComment("Available sounds are the following:")
-    @ConfigComment("   https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Sound.html")
-    @ConfigEntry(path = "sounds.growing-big-tree.sound")
-    private Sound soundsGrowingBigTreeSound = Sound.BLOCK_BUBBLE_COLUMN_UPWARDS_AMBIENT;
-
-    @ConfigEntry(path = "sounds.growing-big-tree.volume")
-    private double soundsGrowingBigTreeVolume = 1.0F;
-
-    @ConfigEntry(path = "sounds.growing-big-tree.pitch")
-    private double soundsGrowingBigTreePitch = 1.0F;
-
     @ConfigComment("Toggle on/off the particle effects.")
     @ConfigEntry(path = "effects.enabled")
     private boolean effectsEnabled = true;
 
-    @ConfigComment("Effect that plays each time the player twerks.")
-    @ConfigComment("Available effects are the following:")
-    @ConfigComment("   https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Effect.html")
-    @ConfigEntry(path = "effects.twerk")
-    private Effect effectsTwerk = Effect.MOBSPAWNER_FLAMES;
-
+    /**
+     * @return the minimumTwerks
+     */
     public int getMinimumTwerks() {
         return minimumTwerks;
     }
 
+    /**
+     * @param minimumTwerks the minimumTwerks to set
+     */
     public void setMinimumTwerks(int minimumTwerks) {
         this.minimumTwerks = minimumTwerks;
     }
 
+    /**
+     * @return the soundsEnabled
+     */
     public boolean isSoundsEnabled() {
         return soundsEnabled;
     }
 
+    /**
+     * @param soundsEnabled the soundsEnabled to set
+     */
     public void setSoundsEnabled(boolean soundsEnabled) {
         this.soundsEnabled = soundsEnabled;
     }
 
+    /**
+     * @return the soundsTwerkSound
+     */
     public Sound getSoundsTwerkSound() {
         return soundsTwerkSound;
     }
 
+    /**
+     * @param soundsTwerkSound the soundsTwerkSound to set
+     */
     public void setSoundsTwerkSound(Sound soundsTwerkSound) {
         this.soundsTwerkSound = soundsTwerkSound;
     }
 
+    /**
+     * @return the soundsTwerkVolume
+     */
     public double getSoundsTwerkVolume() {
         return soundsTwerkVolume;
     }
 
+    /**
+     * @param soundsTwerkVolume the soundsTwerkVolume to set
+     */
     public void setSoundsTwerkVolume(double soundsTwerkVolume) {
         this.soundsTwerkVolume = soundsTwerkVolume;
     }
 
+    /**
+     * @return the soundsTwerkPitch
+     */
     public double getSoundsTwerkPitch() {
         return soundsTwerkPitch;
     }
 
+    /**
+     * @param soundsTwerkPitch the soundsTwerkPitch to set
+     */
     public void setSoundsTwerkPitch(double soundsTwerkPitch) {
         this.soundsTwerkPitch = soundsTwerkPitch;
     }
 
-    public Sound getSoundsGrowingSmallTreeSound() {
-        return soundsGrowingSmallTreeSound;
-    }
-
-    public void setSoundsGrowingSmallTreeSound(Sound soundsGrowingSmallTreeSound) {
-        this.soundsGrowingSmallTreeSound = soundsGrowingSmallTreeSound;
-    }
-
-    public double getSoundsGrowingSmallTreeVolume() {
-        return soundsGrowingSmallTreeVolume;
-    }
-
-    public void setSoundsGrowingSmallTreeVolume(double soundsGrowingSmallTreeVolume) {
-        this.soundsGrowingSmallTreeVolume = soundsGrowingSmallTreeVolume;
-    }
-
-    public double getSoundsGrowingSmallTreePitch() {
-        return soundsGrowingSmallTreePitch;
-    }
-
-    public void setSoundsGrowingSmallTreePitch(double soundsGrowingSmallTreePitch) {
-        this.soundsGrowingSmallTreePitch = soundsGrowingSmallTreePitch;
-    }
-
-    public Sound getSoundsGrowingBigTreeSound() {
-        return soundsGrowingBigTreeSound;
-    }
-
-    public void setSoundsGrowingBigTreeSound(Sound soundsGrowingBigTreeSound) {
-        this.soundsGrowingBigTreeSound = soundsGrowingBigTreeSound;
-    }
-
-    public double getSoundsGrowingBigTreeVolume() {
-        return soundsGrowingBigTreeVolume;
-    }
-
-    public void setSoundsGrowingBigTreeVolume(double soundsGrowingBigTreeVolume) {
-        this.soundsGrowingBigTreeVolume = soundsGrowingBigTreeVolume;
-    }
-
-    public double getSoundsGrowingBigTreePitch() {
-        return soundsGrowingBigTreePitch;
-    }
-
-    public void setSoundsGrowingBigTreePitch(double soundsGrowingBigTreePitch) {
-        this.soundsGrowingBigTreePitch = soundsGrowingBigTreePitch;
-    }
-
+    /**
+     * @return the effectsEnabled
+     */
     public boolean isEffectsEnabled() {
         return effectsEnabled;
     }
 
+    /**
+     * @param effectsEnabled the effectsEnabled to set
+     */
     public void setEffectsEnabled(boolean effectsEnabled) {
         this.effectsEnabled = effectsEnabled;
-    }
-
-    public Effect getEffectsTwerk() {
-        return effectsTwerk;
-    }
-
-    public void setEffectsTwerk(Effect effectsTwerk) {
-        this.effectsTwerk = effectsTwerk;
     }
 
     /**

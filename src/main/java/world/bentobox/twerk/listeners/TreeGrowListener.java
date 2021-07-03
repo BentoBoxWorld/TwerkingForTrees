@@ -1,9 +1,7 @@
 package world.bentobox.twerk.listeners;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -29,9 +27,6 @@ import world.bentobox.bentobox.util.Util;
 import world.bentobox.twerk.TwerkingForTrees;
 
 public class TreeGrowListener implements Listener {
-
-    private static final List<BlockFace> AROUND  = Arrays.asList(BlockFace.NORTH, BlockFace.EAST, BlockFace.NORTH_EAST,
-            BlockFace.SOUTH, BlockFace.WEST, BlockFace.NORTH_WEST, BlockFace.SOUTH_EAST, BlockFace.SOUTH_WEST);
 
     private TwerkingForTrees addon;
     private Map<Island, Integer> twerkCount;
@@ -70,23 +65,10 @@ public class TreeGrowListener implements Listener {
         if (!Tag.SAPLINGS.isTagged(t)) {
             return;
         }
+        // Apply 100 bonemeals - this seems to be enough
         for (int i = 0; i < 100; i++) {
-            if (b.applyBoneMeal(BlockFace.UP)) {
-                // TODO : this never gets called.
-                if (addon.getSettings().isEffectsEnabled()) {
-                    showSparkles(b);
-                }
-                if (addon.getSettings().isSoundsEnabled()) {
-                    b.getWorld().playSound(b.getLocation(), addon.getSettings().getSoundsGrowingSmallTreeSound(),
-                            (float)addon.getSettings().getSoundsGrowingSmallTreeVolume(), (float)addon.getSettings().getSoundsGrowingSmallTreePitch());
-                }
-                return;
-            }
+            b.applyBoneMeal(BlockFace.UP);
         }
-    }
-
-    protected void showSparkles(Block b) {
-        AROUND.stream().map(b::getRelative).map(Block::getLocation).forEach(x -> x.getWorld().playEffect(x, addon.getSettings().getEffectsTwerk(), 0));
     }
 
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
@@ -123,9 +105,9 @@ public class TreeGrowListener implements Listener {
             int count = twerkCount.get(i) + 1;
             twerkCount.put(i, count);
             if (count == addon.getSettings().getMinimumTwerks()) {
-                e.getPlayer().playSound(e.getPlayer().getLocation(), addon.getSettings().getSoundsTwerkSound(),
+                e.getPlayer().getWorld().playSound(e.getPlayer().getLocation(), addon.getSettings().getSoundsTwerkSound(),
                         (float)addon.getSettings().getSoundsTwerkVolume(), (float)addon.getSettings().getSoundsTwerkPitch());
-                e.getPlayer().spawnParticle(Particle.SPELL, e.getPlayer().getLocation(), 20, 3D, 0D, 3D);
+                e.getPlayer().getWorld().spawnParticle(Particle.SPELL, e.getPlayer().getLocation(), 20, 3D, 0D, 3D);
             }
         });
     }
