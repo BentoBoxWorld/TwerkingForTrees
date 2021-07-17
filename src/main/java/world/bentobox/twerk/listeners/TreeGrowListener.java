@@ -7,6 +7,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.Tag;
@@ -31,7 +32,7 @@ public class TreeGrowListener implements Listener {
     private TwerkingForTrees addon;
     private Map<Island, Integer> twerkCount;
     private Set<Island> isTwerking;
-    private Map<Block, Island> plantedTrees;
+    private Map<Location, Island> plantedTrees;
 
     public TreeGrowListener(@NonNull TwerkingForTrees addon) {
         this.addon = addon;
@@ -46,7 +47,8 @@ public class TreeGrowListener implements Listener {
         Bukkit.getScheduler().runTaskTimer(addon.getPlugin(), () -> {
             isTwerking = twerkCount.entrySet().stream().filter(e -> e.getValue() > addon.getSettings().getMinimumTwerks()).map(Map.Entry::getKey).collect(Collectors.toSet());
             twerkCount.clear();
-            plantedTrees.keySet().removeIf(k -> !Tag.SAPLINGS.isTagged(k.getType()));
+            // Clear plantedTrees if no one on island is twerking
+            plantedTrees.values().removeIf(i -> !isTwerking.contains(i));
         }
         , 0L, 40L);
         // Every 20 seconds
@@ -56,7 +58,7 @@ public class TreeGrowListener implements Listener {
         .stream()
         .filter(e -> isTwerking.contains(e.getValue()))
         .map(Map.Entry::getKey)
-        .forEach(b -> Util.getChunkAtAsync(b.getLocation()).thenRun(() -> growTree(b)))
+        .forEach(b -> Util.getChunkAtAsync(b).thenRun(() -> growTree(b.getBlock())))
         , 10L, 400L);
     }
 
@@ -119,7 +121,7 @@ public class TreeGrowListener implements Listener {
                 for (int z = player.getLocation().getBlockZ() - range ; z <= player.getLocation().getBlockZ() + range; z++) {
                     Block block = player.getWorld().getBlockAt(x, y, z);
                     if (Tag.SAPLINGS.isTagged(block.getType())) {
-                        plantedTrees.put(block, i);
+                        plantedTrees.put(block.getLocation(), i);
                     }
                 }
             }
