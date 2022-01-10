@@ -1,6 +1,7 @@
 package world.bentobox.twerk.listeners;
 
 import java.util.Arrays;
+
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.HashMap;
@@ -190,9 +191,9 @@ public class TreeGrowListener implements Listener {
             int count = twerkCount.get(i) + 1;
             twerkCount.put(i, count);
             if (count == addon.getSettings().getMinimumTwerks()) {
-                e.getPlayer().getWorld().playSound(e.getPlayer().getLocation(), addon.getSettings().getSoundsTwerkSound(),
+                e.getPlayer().playSound(e.getPlayer().getLocation(), addon.getSettings().getSoundsTwerkSound(),
                         (float)addon.getSettings().getSoundsTwerkVolume(), (float)addon.getSettings().getSoundsTwerkPitch());
-                e.getPlayer().getWorld().spawnParticle(Particle.SPELL, e.getPlayer().getLocation(), 20, 3D, 0D, 3D);
+                e.getPlayer().spawnParticle(Particle.SPELL, e.getPlayer().getLocation(), 20, 3D, 0D, 3D);
             }
         });
     }
