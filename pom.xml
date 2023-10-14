@@ -49,12 +49,12 @@
         <java.version>1.8</java.version>
         <powermock.version>2.0.4</powermock.version>
         <!-- More visible way how to change dependency versions -->
-        <spigot.version>1.16.5-R0.1-SNAPSHOT</spigot.version>
+        <spigot.version>1.19.1-R0.1-SNAPSHOT</spigot.version>
         <bentobox.version>1.14.0-SNAPSHOT</bentobox.version>
         <!-- Revision variable removes warning about dynamic version -->
         <revision>${build.version}-SNAPSHOT</revision>
         <!-- This allows to change between versions and snapshots. -->
-        <build.version>1.4.3</build.version>
+        <build.version>1.4.4</build.version>
         <build.number>-LOCAL</build.number>
     </properties>
 
@@ -224,15 +224,19 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>3.0.1</version>
+                <version>3.4.1</version>
                 <configuration>
-                    <show>public</show>
+                    <source>${java.version}</source>
+                    <show>private</show>
+                    <quiet>true</quiet>
                     <failOnError>false</failOnError>
                     <additionalJOption>-Xdoclint:none</additionalJOption>
+                    <javadocExecutable>${java.home}/bin/javadoc</javadocExecutable>
                 </configuration>
                 <executions>
                     <execution>
                         <id>attach-javadocs</id>
+                        <phase>package</phase>
                         <goals>
                             <goal>jar</goal>
                         </goals>
@@ -265,7 +269,7 @@
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.8.3</version>
+                <version>0.8.10</version>
                 <configuration>
                     <append>true</append>
                     <excludes>
