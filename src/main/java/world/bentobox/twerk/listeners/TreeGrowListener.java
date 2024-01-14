@@ -149,39 +149,6 @@ public class TreeGrowListener implements Listener {
             }
         }
     }
-    
-    protected boolean bigTreeSaplings(Block b) {
-        Material treeType = b.getType();
-        TreeType type = SAPLING_TO_BIG_TREE_TYPE.get(treeType);
-        for (List<BlockFace> q : QUADS) {
-            if (q.stream().map(b::getRelative).allMatch(c -> c.getType().equals(treeType))) {
-                // All the same sapling type found in this quad
-                q.stream().map(b::getRelative).forEach(c -> c.setType(Material.AIR));
-                // Get the tree planting location
-                Location l = b.getRelative(q.get(0)).getLocation();
-                if (b.getWorld().generateTree(l, RAND, type,
-                        bs -> Flags.TREES_GROWING_OUTSIDE_RANGE.isSetForWorld(bs.getWorld())
-                                || addon.getIslands().getProtectedIslandAt(bs.getLocation()).isPresent())) {
-                    if (addon.getSettings().isEffectsEnabled()) {
-                        showSparkles(b);
-                    }
-                    if (addon.getSettings().isSoundsEnabled()) {
-                        b.getWorld().playSound(b.getLocation(), addon.getSettings().getSoundsGrowingBigTreeSound(),
-                                (float)addon.getSettings().getSoundsGrowingBigTreeVolume(), (float)addon.getSettings().getSoundsGrowingBigTreePitch());
-                    }
-                    return true;
-                } else {
-                    // Generation failed, reset saplings
-                    q.stream().map(b::getRelative).forEach(c -> c.setType(treeType));
-                }
-            }
-        }
-        return false;
-    }
-
-    protected void showSparkles(Block b) {
-        AROUND.stream().map(b::getRelative).map(Block::getLocation).forEach(x -> x.getWorld().playEffect(x, addon.getSettings().getEffectsTwerk(), 0));
-    }
 
     protected boolean bigTreeSaplings(Block b) {
         Material treeType = b.getType();
