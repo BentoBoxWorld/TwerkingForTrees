@@ -56,6 +56,8 @@
         <!-- This allows to change between versions and snapshots. -->
         <build.version>1.5.0</build.version>
         <build.number>-LOCAL</build.number>
+        <sonar.organization>bentobox-world</sonar.organization>
+        <sonar.host.url>https://sonarcloud.io</sonar.host.url>
     </properties>
 
     <profiles>
