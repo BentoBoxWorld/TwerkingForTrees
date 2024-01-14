@@ -62,9 +62,6 @@ public class TreeGrowListener implements Listener {
         conv.put(Material.MANGROVE_PROPAGULE, TreeType.MANGROVE);
         conv.put(Material.CHERRY_SAPLING, TreeType.CHERRY);
         conv.put(Material.DARK_OAK_SAPLING, TreeType.DARK_OAK);
-        conv.put(Material.BROWN_MUSHROOM, TreeType.BROWN_MUSHROOM);
-        conv.put(Material.RED_MUSHROOM, TreeType.RED_MUSHROOM);
-        conv.put(Material.CHORUS_PLANT, TreeType.CHORUS_PLANT);
         SAPLING_TO_TREE_TYPE = Collections.unmodifiableMap(conv);
     }
     private static final Map<Material, TreeType> SAPLING_TO_BIG_TREE_TYPE;
