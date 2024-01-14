@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -30,6 +31,7 @@ import org.bukkit.event.world.StructureGrowEvent;
 import org.eclipse.jdt.annotation.NonNull;
 
 import world.bentobox.bentobox.database.objects.Island;
+import world.bentobox.bentobox.lists.Flags;
 import world.bentobox.bentobox.util.Util;
 import world.bentobox.twerk.TwerkingForTrees;
 
@@ -59,6 +61,8 @@ public class TreeGrowListener implements Listener {
         conv.put(Material.AZALEA, TreeType.AZALEA);
         conv.put(Material.FLOWERING_AZALEA, TreeType.AZALEA);
         conv.put(Material.MANGROVE_PROPAGULE, TreeType.MANGROVE);
+        conv.put(Material.CHERRY_SAPLING, TreeType.CHERRY);
+        conv.put(Material.DARK_OAK_SAPLING, TreeType.DARK_OAK);
         SAPLING_TO_TREE_TYPE = Collections.unmodifiableMap(conv);
     }
     private static final Map<Material, TreeType> SAPLING_TO_BIG_TREE_TYPE;
@@ -69,6 +73,8 @@ public class TreeGrowListener implements Listener {
         conv.put(Material.JUNGLE_SAPLING, TreeType.JUNGLE);
         SAPLING_TO_BIG_TREE_TYPE = Collections.unmodifiableMap(conv);
     }
+
+    private static final Random RAND = new Random();
 
     private TwerkingForTrees addon;
     private Map<Island, Integer> twerkCount;
@@ -114,7 +120,10 @@ public class TreeGrowListener implements Listener {
         } else if (SAPLING_TO_TREE_TYPE.containsKey(t)) {
             TreeType type = SAPLING_TO_TREE_TYPE.getOrDefault(b.getType(), TreeType.TREE);
             b.setType(Material.AIR);
-            if (b.getWorld().generateTree(b.getLocation(), type, new BlockChangeHandler(addon, b.getWorld()))) {
+
+            if (b.getWorld().generateTree(b.getLocation(), RAND, type,
+                    bs -> Flags.TREES_GROWING_OUTSIDE_RANGE.isSetForWorld(bs.getWorld())
+                            || addon.getIslands().getProtectedIslandAt(bs.getLocation()).isPresent())) {
                 if (addon.getSettings().isEffectsEnabled()) {
                     showSparkles(b);
                 }
@@ -127,6 +136,39 @@ public class TreeGrowListener implements Listener {
                 b.setType(t);
             }
         }
+    }
+    
+    protected boolean bigTreeSaplings(Block b) {
+        Material treeType = b.getType();
+        TreeType type = SAPLING_TO_BIG_TREE_TYPE.get(treeType);
+        for (List<BlockFace> q : QUADS) {
+            if (q.stream().map(b::getRelative).allMatch(c -> c.getType().equals(treeType))) {
+                // All the same sapling type found in this quad
+                q.stream().map(b::getRelative).forEach(c -> c.setType(Material.AIR));
+                // Get the tree planting location
+                Location l = b.getRelative(q.get(0)).getLocation();
+                if (b.getWorld().generateTree(l, RAND, type,
+                        bs -> Flags.TREES_GROWING_OUTSIDE_RANGE.isSetForWorld(bs.getWorld())
+                                || addon.getIslands().getProtectedIslandAt(bs.getLocation()).isPresent())) {
+                    if (addon.getSettings().isEffectsEnabled()) {
+                        showSparkles(b);
+                    }
+                    if (addon.getSettings().isSoundsEnabled()) {
+                        b.getWorld().playSound(b.getLocation(), addon.getSettings().getSoundsGrowingBigTreeSound(),
+                                (float)addon.getSettings().getSoundsGrowingBigTreeVolume(), (float)addon.getSettings().getSoundsGrowingBigTreePitch());
+                    }
+                    return true;
+                } else {
+                    // Generation failed, reset saplings
+                    q.stream().map(b::getRelative).forEach(c -> c.setType(treeType));
+                }
+            }
+        }
+        return false;
+    }
+
+    protected void showSparkles(Block b) {
+        AROUND.stream().map(b::getRelative).map(Block::getLocation).forEach(x -> x.getWorld().playEffect(x, addon.getSettings().getEffectsTwerk(), 0));
     }
 
     protected boolean bigTreeSaplings(Block b) {
