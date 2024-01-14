@@ -27,6 +27,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
+import org.bukkit.event.player.PlayerToggleSprintEvent;
 import org.bukkit.event.world.StructureGrowEvent;
 import org.eclipse.jdt.annotation.NonNull;
 
@@ -80,6 +81,8 @@ public class TreeGrowListener implements Listener {
     private Map<Island, Integer> twerkCount;
     private Set<Island> isTwerking;
     private Map<Location, Island> plantedTrees;
+    private Set<Player> twerkers = new HashSet<>();
+    private Set<Player> sprinters = new HashSet<>();
 
     public TreeGrowListener(@NonNull TwerkingForTrees addon) {
         this.addon = addon;
@@ -98,7 +101,7 @@ public class TreeGrowListener implements Listener {
             plantedTrees.values().removeIf(i -> !isTwerking.contains(i));
         }
         , 0L, 40L);
-        // Every 20 seconds
+        // Every 10 seconds
         Bukkit.getScheduler().runTaskTimer(addon.getPlugin(), () ->
         plantedTrees
         .entrySet()
@@ -107,6 +110,14 @@ public class TreeGrowListener implements Listener {
         .map(Map.Entry::getKey)
         .forEach(b -> Util.getChunkAtAsync(b).thenRun(() -> growTree(b.getBlock())))
         , 10L, 400L);
+        // Simulate twerking
+        if (addon.getSettings().isHoldForTwerk()) {
+            Bukkit.getScheduler().runTaskTimer(addon.getPlugin(), () -> twerkers.forEach(this::twerk), 0L, 5L);
+        }
+        // Sprinting
+        if (addon.getSettings().isSprintToGrow()) {
+            Bukkit.getScheduler().runTaskTimer(addon.getPlugin(), () -> sprinters.forEach(this::twerk), 0L, 5L);
+        }
     }
 
     protected void growTree(Block b) {
@@ -117,7 +128,8 @@ public class TreeGrowListener implements Listener {
         // Try to grow big tree if possible
         if (SAPLING_TO_BIG_TREE_TYPE.containsKey(t) && bigTreeSaplings(b)) {
             return;
-        } else if (SAPLING_TO_TREE_TYPE.containsKey(t)) {
+        }
+        if (SAPLING_TO_TREE_TYPE.containsKey(t)) {
             TreeType type = SAPLING_TO_TREE_TYPE.getOrDefault(b.getType(), TreeType.TREE);
             b.setType(Material.AIR);
 
@@ -174,28 +186,50 @@ public class TreeGrowListener implements Listener {
     protected boolean bigTreeSaplings(Block b) {
         Material treeType = b.getType();
         TreeType type = SAPLING_TO_BIG_TREE_TYPE.get(treeType);
-        for (List<BlockFace> q : QUADS) {
-            if (q.stream().map(b::getRelative).allMatch(c -> c.getType().equals(treeType))) {
-                // All the same sapling type found in this quad
-                q.stream().map(b::getRelative).forEach(c -> c.setType(Material.AIR));
-                // Get the tree planting location
-                Location l = b.getRelative(q.get(0)).getLocation();
-                if (b.getWorld().generateTree(l, type, new BlockChangeHandler(addon, b.getWorld()))) {
-                    if (addon.getSettings().isEffectsEnabled()) {
-                        showSparkles(b);
-                    }
-                    if (addon.getSettings().isSoundsEnabled()) {
-                        b.getWorld().playSound(b.getLocation(), addon.getSettings().getSoundsGrowingBigTreeSound(),
-                                (float)addon.getSettings().getSoundsGrowingBigTreeVolume(), (float)addon.getSettings().getSoundsGrowingBigTreePitch());
-                    }
+
+        for (List<BlockFace> quad : QUADS) {
+            if (isQuadOfSameType(b, quad, treeType)) {
+                clearSaplings(b, quad);
+                Location treeLocation = b.getRelative(quad.get(0)).getLocation();
+
+                if (generateBigTree(b, treeLocation, type)) {
+                    playBigTreeEffectsAndSounds(b);
                     return true;
                 } else {
-                    // Generation failed, reset saplings
-                    q.stream().map(b::getRelative).forEach(c -> c.setType(treeType));
+                    resetSaplings(b, quad, treeType);
                 }
             }
         }
         return false;
+    }
+
+    private boolean isQuadOfSameType(Block b, List<BlockFace> quad, Material treeType) {
+        return quad.stream().map(b::getRelative).allMatch(c -> c.getType().equals(treeType));
+    }
+
+    private void clearSaplings(Block b, List<BlockFace> quad) {
+        quad.stream().map(b::getRelative).forEach(c -> c.setType(Material.AIR));
+    }
+
+    private boolean generateBigTree(Block b, Location location, TreeType type) {
+        return b.getWorld().generateTree(location, RAND, type,
+                bs -> Flags.TREES_GROWING_OUTSIDE_RANGE.isSetForWorld(bs.getWorld())
+                        || addon.getIslands().getProtectedIslandAt(bs.getLocation()).isPresent());
+    }
+
+    private void playBigTreeEffectsAndSounds(Block b) {
+        if (addon.getSettings().isEffectsEnabled()) {
+            showSparkles(b);
+        }
+        if (addon.getSettings().isSoundsEnabled()) {
+            b.getWorld().playSound(b.getLocation(), addon.getSettings().getSoundsGrowingBigTreeSound(),
+                    (float) addon.getSettings().getSoundsGrowingBigTreeVolume(),
+                    (float) addon.getSettings().getSoundsGrowingBigTreePitch());
+        }
+    }
+
+    private void resetSaplings(Block b, List<BlockFace> quad, Material treeType) {
+        quad.stream().map(b::getRelative).forEach(c -> c.setType(treeType));
     }
 
     protected void showSparkles(Block b) {
@@ -214,18 +248,48 @@ public class TreeGrowListener implements Listener {
 
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onTwerk(PlayerToggleSneakEvent e) {
-        if (!e.getPlayer().getWorld().getEnvironment().equals(Environment.NORMAL)
-                || !addon.getPlugin().getIWM().inWorld(Util.getWorld(e.getPlayer().getWorld()))
-                || e.getPlayer().isFlying()
-                || !e.getPlayer().hasPermission(addon.getPlugin().getIWM().getPermissionPrefix(e.getPlayer().getWorld()) + "twerkingfortrees")) {
+        if (check(e.getPlayer())) {
             return;
         }
+        if (addon.getSettings().isHoldForTwerk()) {
+            Player player = e.getPlayer();
+            if (!twerkers.add(player)) {
+                twerkers.remove(player);
+            }
+            return;
+        }
+        twerk(e.getPlayer());
+    }
+
+    private boolean check(Player player) {
+        return !player.getWorld().getEnvironment().equals(Environment.NORMAL)
+                || !addon.getPlugin().getIWM().inWorld(Util.getWorld(player.getWorld())) || player.isFlying()
+                || !player.hasPermission(
+                        addon.getPlugin().getIWM().getPermissionPrefix(player.getWorld()) + "twerkingfortrees");
+    }
+
+    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
+    public void onSprint(PlayerToggleSprintEvent e) {
+        if (check(e.getPlayer())) {
+            return;
+        }
+        if (addon.getSettings().isSprintToGrow()) {
+            Player player = e.getPlayer();
+            if (!sprinters.add(player)) {
+                sprinters.remove(player);
+            }
+            return;
+        }
+        twerk(e.getPlayer());
+    }
+
+    private void twerk(Player player) {
         // Get the island
-        addon.getIslands().getIslandAt(e.getPlayer().getLocation()).ifPresent(i -> {
+        addon.getIslands().getIslandAt(player.getLocation()).ifPresent(i -> {
             // Check if there are any planted saplings around player
             if (!twerkCount.containsKey(i) || twerkCount.get(i) == 0) {
                 // New twerking effort
-                getNearbySaplings(e.getPlayer(), i);
+                getNearbySaplings(player, i);
             }
             if (!plantedTrees.values().contains(i)) {
                 // None, so return
@@ -235,15 +299,17 @@ public class TreeGrowListener implements Listener {
             twerkCount.putIfAbsent(i, 0);
             int count = twerkCount.get(i) + 1;
             twerkCount.put(i, count);
-            if (count == addon.getSettings().getMinimumTwerks()) {
-                e.getPlayer().playSound(e.getPlayer().getLocation(), addon.getSettings().getSoundsTwerkSound(),
+            if (count >= addon.getSettings().getMinimumTwerks()) {
+                player.playSound(player.getLocation(), addon.getSettings().getSoundsTwerkSound(),
                         (float)addon.getSettings().getSoundsTwerkVolume(), (float)addon.getSettings().getSoundsTwerkPitch());
-                e.getPlayer().spawnParticle(Particle.SPELL, e.getPlayer().getLocation(), 20, 3D, 0D, 3D);
+                player.spawnParticle(Particle.SPELL, player.getLocation(), 20, 3D, 0D, 3D);
             }
         });
+
     }
 
     private void getNearbySaplings(Player player, Island i) {
+        plantedTrees.values().removeIf(i::equals);
         int range = addon.getSettings().getRange();
         for (int x = player.getLocation().getBlockX() - range ; x <= player.getLocation().getBlockX() + range; x++) {
             for (int y = player.getLocation().getBlockY() - range ; y <= player.getLocation().getBlockY() + range; y++) {
