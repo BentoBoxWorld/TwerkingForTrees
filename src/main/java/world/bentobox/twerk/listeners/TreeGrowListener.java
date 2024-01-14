@@ -27,6 +27,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
+import org.bukkit.event.player.PlayerToggleSprintEvent;
 import org.bukkit.event.world.StructureGrowEvent;
 import org.eclipse.jdt.annotation.NonNull;
 
@@ -81,6 +82,7 @@ public class TreeGrowListener implements Listener {
     private Set<Island> isTwerking;
     private Map<Location, Island> plantedTrees;
     private Set<Player> twerkers = new HashSet<>();
+    private Set<Player> sprinters = new HashSet<>();
 
     public TreeGrowListener(@NonNull TwerkingForTrees addon) {
         this.addon = addon;
@@ -111,6 +113,10 @@ public class TreeGrowListener implements Listener {
         // Simulate twerking
         if (addon.getSettings().isHoldForTwerk()) {
             Bukkit.getScheduler().runTaskTimer(addon.getPlugin(), () -> twerkers.forEach(this::twerk), 0L, 5L);
+        }
+        // Sprinting
+        if (addon.getSettings().isSprintToGrow()) {
+            Bukkit.getScheduler().runTaskTimer(addon.getPlugin(), () -> sprinters.forEach(this::twerk), 0L, 5L);
         }
     }
 
@@ -209,16 +215,35 @@ public class TreeGrowListener implements Listener {
 
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onTwerk(PlayerToggleSneakEvent e) {
-        if (!e.getPlayer().getWorld().getEnvironment().equals(Environment.NORMAL)
-                || !addon.getPlugin().getIWM().inWorld(Util.getWorld(e.getPlayer().getWorld()))
-                || e.getPlayer().isFlying()
-                || !e.getPlayer().hasPermission(addon.getPlugin().getIWM().getPermissionPrefix(e.getPlayer().getWorld()) + "twerkingfortrees")) {
+        if (check(e.getPlayer())) {
             return;
         }
         if (addon.getSettings().isHoldForTwerk()) {
             Player player = e.getPlayer();
             if (!twerkers.add(player)) {
                 twerkers.remove(player);
+            }
+            return;
+        }
+        twerk(e.getPlayer());
+    }
+
+    private boolean check(Player player) {
+        return !player.getWorld().getEnvironment().equals(Environment.NORMAL)
+                || !addon.getPlugin().getIWM().inWorld(Util.getWorld(player.getWorld())) || player.isFlying()
+                || !player.hasPermission(
+                        addon.getPlugin().getIWM().getPermissionPrefix(player.getWorld()) + "twerkingfortrees");
+    }
+
+    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
+    public void onSprint(PlayerToggleSprintEvent e) {
+        if (check(e.getPlayer())) {
+            return;
+        }
+        if (addon.getSettings().isSprintToGrow()) {
+            Player player = e.getPlayer();
+            if (!sprinters.add(player)) {
+                sprinters.remove(player);
             }
             return;
         }
@@ -251,6 +276,7 @@ public class TreeGrowListener implements Listener {
     }
 
     private void getNearbySaplings(Player player, Island i) {
+        plantedTrees.values().removeIf(i::equals);
         int range = addon.getSettings().getRange();
         for (int x = player.getLocation().getBlockX() - range ; x <= player.getLocation().getBlockX() + range; x++) {
             for (int y = player.getLocation().getBlockY() - range ; y <= player.getLocation().getBlockY() + range; y++) {

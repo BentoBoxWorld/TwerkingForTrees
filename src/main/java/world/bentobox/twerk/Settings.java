@@ -25,6 +25,10 @@ public class Settings implements ConfigObject {
     @ConfigEntry(path = "hold-for-twerk")
     private boolean holdForTwerk = false;
     
+    @ConfigComment("Use sprinting to grow trees instead of twerking.")
+    @ConfigEntry(path = "sprint-to-grow")
+    private boolean sprintToGrow = false;
+
     @ConfigComment("Range to look for saplings when twerking. A range of 5 will look +/- 5 blocks in all directions around the player")
     @ConfigComment("Making this too big will lag your server.")
     @ConfigEntry(path = "range")
@@ -213,5 +217,19 @@ public class Settings implements ConfigObject {
      */
     public void setHoldForTwerk(boolean holdForTwerk) {
         this.holdForTwerk = holdForTwerk;
+    }
+
+    /**
+     * @return the sprintToGrow
+     */
+    public boolean isSprintToGrow() {
+        return sprintToGrow;
+    }
+
+    /**
+     * @param sprintToGrow the sprintToGrow to set
+     */
+    public void setSprintToGrow(boolean sprintToGrow) {
+        this.sprintToGrow = sprintToGrow;
     }
 }

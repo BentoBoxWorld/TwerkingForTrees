@@ -1,8 +1,12 @@
-# TwerkingForTrees configuration file.
-#
+# TwerkingForTrees configuration file. {$version}
+# 
 # How many times the player must twerk before the tree start growing faster.
 # If the player has not twerked enough, then the tree will not grow faster.
 minimum-twerks: 4
+# Hold to twerk. Accessibility feature. Instead of hitting the crouch button continuously, hold it down.
+hold-for-twerk: false
+# Use sprinting to grow trees instead of twerking.
+sprint-to-grow: false
 # Range to look for saplings when twerking. A range of 5 will look +/- 5 blocks in all directions around the player
 # Making this too big will lag your server.
 range: 5
