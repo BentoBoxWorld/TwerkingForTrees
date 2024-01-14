@@ -117,7 +117,8 @@ public class TreeGrowListener implements Listener {
         // Try to grow big tree if possible
         if (SAPLING_TO_BIG_TREE_TYPE.containsKey(t) && bigTreeSaplings(b)) {
             return;
-        } else if (SAPLING_TO_TREE_TYPE.containsKey(t)) {
+        }
+        if (SAPLING_TO_TREE_TYPE.containsKey(t)) {
             TreeType type = SAPLING_TO_TREE_TYPE.getOrDefault(b.getType(), TreeType.TREE);
             b.setType(Material.AIR);
 
@@ -137,65 +138,54 @@ public class TreeGrowListener implements Listener {
             }
         }
     }
-    
+
     protected boolean bigTreeSaplings(Block b) {
         Material treeType = b.getType();
         TreeType type = SAPLING_TO_BIG_TREE_TYPE.get(treeType);
-        for (List<BlockFace> q : QUADS) {
-            if (q.stream().map(b::getRelative).allMatch(c -> c.getType().equals(treeType))) {
-                // All the same sapling type found in this quad
-                q.stream().map(b::getRelative).forEach(c -> c.setType(Material.AIR));
-                // Get the tree planting location
-                Location l = b.getRelative(q.get(0)).getLocation();
-                if (b.getWorld().generateTree(l, RAND, type,
-                        bs -> Flags.TREES_GROWING_OUTSIDE_RANGE.isSetForWorld(bs.getWorld())
-                                || addon.getIslands().getProtectedIslandAt(bs.getLocation()).isPresent())) {
-                    if (addon.getSettings().isEffectsEnabled()) {
-                        showSparkles(b);
-                    }
-                    if (addon.getSettings().isSoundsEnabled()) {
-                        b.getWorld().playSound(b.getLocation(), addon.getSettings().getSoundsGrowingBigTreeSound(),
-                                (float)addon.getSettings().getSoundsGrowingBigTreeVolume(), (float)addon.getSettings().getSoundsGrowingBigTreePitch());
-                    }
+
+        for (List<BlockFace> quad : QUADS) {
+            if (isQuadOfSameType(b, quad, treeType)) {
+                clearSaplings(b, quad);
+                Location treeLocation = b.getRelative(quad.get(0)).getLocation();
+
+                if (generateBigTree(b, treeLocation, type)) {
+                    playBigTreeEffectsAndSounds(b);
                     return true;
                 } else {
-                    // Generation failed, reset saplings
-                    q.stream().map(b::getRelative).forEach(c -> c.setType(treeType));
+                    resetSaplings(b, quad, treeType);
                 }
             }
         }
         return false;
     }
 
-    protected void showSparkles(Block b) {
-        AROUND.stream().map(b::getRelative).map(Block::getLocation).forEach(x -> x.getWorld().playEffect(x, addon.getSettings().getEffectsTwerk(), 0));
+    private boolean isQuadOfSameType(Block b, List<BlockFace> quad, Material treeType) {
+        return quad.stream().map(b::getRelative).allMatch(c -> c.getType().equals(treeType));
     }
 
-    protected boolean bigTreeSaplings(Block b) {
-        Material treeType = b.getType();
-        TreeType type = SAPLING_TO_BIG_TREE_TYPE.get(treeType);
-        for (List<BlockFace> q : QUADS) {
-            if (q.stream().map(b::getRelative).allMatch(c -> c.getType().equals(treeType))) {
-                // All the same sapling type found in this quad
-                q.stream().map(b::getRelative).forEach(c -> c.setType(Material.AIR));
-                // Get the tree planting location
-                Location l = b.getRelative(q.get(0)).getLocation();
-                if (b.getWorld().generateTree(l, type, new BlockChangeHandler(addon, b.getWorld()))) {
-                    if (addon.getSettings().isEffectsEnabled()) {
-                        showSparkles(b);
-                    }
-                    if (addon.getSettings().isSoundsEnabled()) {
-                        b.getWorld().playSound(b.getLocation(), addon.getSettings().getSoundsGrowingBigTreeSound(),
-                                (float)addon.getSettings().getSoundsGrowingBigTreeVolume(), (float)addon.getSettings().getSoundsGrowingBigTreePitch());
-                    }
-                    return true;
-                } else {
-                    // Generation failed, reset saplings
-                    q.stream().map(b::getRelative).forEach(c -> c.setType(treeType));
-                }
-            }
+    private void clearSaplings(Block b, List<BlockFace> quad) {
+        quad.stream().map(b::getRelative).forEach(c -> c.setType(Material.AIR));
+    }
+
+    private boolean generateBigTree(Block b, Location location, TreeType type) {
+        return b.getWorld().generateTree(location, RAND, type,
+                bs -> Flags.TREES_GROWING_OUTSIDE_RANGE.isSetForWorld(bs.getWorld())
+                        || addon.getIslands().getProtectedIslandAt(bs.getLocation()).isPresent());
+    }
+
+    private void playBigTreeEffectsAndSounds(Block b) {
+        if (addon.getSettings().isEffectsEnabled()) {
+            showSparkles(b);
         }
-        return false;
+        if (addon.getSettings().isSoundsEnabled()) {
+            b.getWorld().playSound(b.getLocation(), addon.getSettings().getSoundsGrowingBigTreeSound(),
+                    (float) addon.getSettings().getSoundsGrowingBigTreeVolume(),
+                    (float) addon.getSettings().getSoundsGrowingBigTreePitch());
+        }
+    }
+
+    private void resetSaplings(Block b, List<BlockFace> quad, Material treeType) {
+        quad.stream().map(b::getRelative).forEach(c -> c.setType(treeType));
     }
 
     protected void showSparkles(Block b) {
