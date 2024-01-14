@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
@@ -21,7 +20,6 @@ import org.bukkit.TreeType;
 import org.bukkit.World.Environment;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.block.BlockState;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -125,7 +123,9 @@ public class TreeGrowListener implements Listener {
             TreeType type = SAPLING_TO_TREE_TYPE.getOrDefault(b.getType(), TreeType.TREE);
             b.setType(Material.AIR);
 
-            if (b.getWorld().generateTree(b.getLocation(), RAND, type, this::canSetBlock)) {
+            if (b.getWorld().generateTree(b.getLocation(), RAND, type,
+                    bs -> Flags.TREES_GROWING_OUTSIDE_RANGE.isSetForWorld(bs.getWorld())
+                            || addon.getIslands().getProtectedIslandAt(bs.getLocation()).isPresent())) {
                 if (addon.getSettings().isEffectsEnabled()) {
                     showSparkles(b);
                 }
@@ -140,18 +140,6 @@ public class TreeGrowListener implements Listener {
         }
     }
     
-    /**
-     * Checks if a block can be made at location or not
-     * @param bs - BlockState
-     * @return true if it can
-     */
-    private Predicate<Boolean> canSetBlock(BlockState bs) {
-        return input -> {
-            return Flags.TREES_GROWING_OUTSIDE_RANGE.isSetForWorld(bs.getWorld())
-                    || addon.getIslands().getProtectedIslandAt(bs.getLocation()).isPresent();
-        };
-    }
-
     protected boolean bigTreeSaplings(Block b) {
         Material treeType = b.getType();
         TreeType type = SAPLING_TO_BIG_TREE_TYPE.get(treeType);
@@ -161,7 +149,9 @@ public class TreeGrowListener implements Listener {
                 q.stream().map(b::getRelative).forEach(c -> c.setType(Material.AIR));
                 // Get the tree planting location
                 Location l = b.getRelative(q.get(0)).getLocation();
-                if (b.getWorld().generateTree(l, RAND, type, this::canSetBlock)) {
+                if (b.getWorld().generateTree(l, RAND, type,
+                        bs -> Flags.TREES_GROWING_OUTSIDE_RANGE.isSetForWorld(bs.getWorld())
+                                || addon.getIslands().getProtectedIslandAt(bs.getLocation()).isPresent())) {
                     if (addon.getSettings().isEffectsEnabled()) {
                         showSparkles(b);
                     }
