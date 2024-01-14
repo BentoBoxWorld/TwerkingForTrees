@@ -20,6 +20,10 @@ public class Settings implements ConfigObject {
     @ConfigComment("If the player has not twerked enough, then the tree will not grow faster.")
     @ConfigEntry(path = "minimum-twerks")
     private int minimumTwerks = 4;
+
+    @ConfigComment("Hold to twerk. Accessibility feature. Instead of hitting the crouch button continuously, hold it down.")
+    @ConfigEntry(path = "hold-for-twerk")
+    private boolean holdForTwerk = false;
     
     @ConfigComment("Range to look for saplings when twerking. A range of 5 will look +/- 5 blocks in all directions around the player")
     @ConfigComment("Making this too big will lag your server.")
@@ -195,5 +199,19 @@ public class Settings implements ConfigObject {
      */
     public void setRange(int range) {
         this.range = range;
+    }
+
+    /**
+     * @return the holdForTwerk
+     */
+    public boolean isHoldForTwerk() {
+        return holdForTwerk;
+    }
+
+    /**
+     * @param holdForTwerk the holdForTwerk to set
+     */
+    public void setHoldForTwerk(boolean holdForTwerk) {
+        this.holdForTwerk = holdForTwerk;
     }
 }

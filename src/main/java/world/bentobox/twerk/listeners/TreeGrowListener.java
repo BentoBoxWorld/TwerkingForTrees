@@ -80,6 +80,7 @@ public class TreeGrowListener implements Listener {
     private Map<Island, Integer> twerkCount;
     private Set<Island> isTwerking;
     private Map<Location, Island> plantedTrees;
+    private Set<Player> twerkers = new HashSet<>();
 
     public TreeGrowListener(@NonNull TwerkingForTrees addon) {
         this.addon = addon;
@@ -98,7 +99,7 @@ public class TreeGrowListener implements Listener {
             plantedTrees.values().removeIf(i -> !isTwerking.contains(i));
         }
         , 0L, 40L);
-        // Every 20 seconds
+        // Every 10 seconds
         Bukkit.getScheduler().runTaskTimer(addon.getPlugin(), () ->
         plantedTrees
         .entrySet()
@@ -107,6 +108,10 @@ public class TreeGrowListener implements Listener {
         .map(Map.Entry::getKey)
         .forEach(b -> Util.getChunkAtAsync(b).thenRun(() -> growTree(b.getBlock())))
         , 10L, 400L);
+        // Simulate twerking
+        if (addon.getSettings().isHoldForTwerk()) {
+            Bukkit.getScheduler().runTaskTimer(addon.getPlugin(), () -> twerkers.forEach(this::twerk), 0L, 5L);
+        }
     }
 
     protected void growTree(Block b) {
@@ -210,12 +215,23 @@ public class TreeGrowListener implements Listener {
                 || !e.getPlayer().hasPermission(addon.getPlugin().getIWM().getPermissionPrefix(e.getPlayer().getWorld()) + "twerkingfortrees")) {
             return;
         }
+        if (addon.getSettings().isHoldForTwerk()) {
+            Player player = e.getPlayer();
+            if (!twerkers.add(player)) {
+                twerkers.remove(player);
+            }
+            return;
+        }
+        twerk(e.getPlayer());
+    }
+
+    private void twerk(Player player) {
         // Get the island
-        addon.getIslands().getIslandAt(e.getPlayer().getLocation()).ifPresent(i -> {
+        addon.getIslands().getIslandAt(player.getLocation()).ifPresent(i -> {
             // Check if there are any planted saplings around player
             if (!twerkCount.containsKey(i) || twerkCount.get(i) == 0) {
                 // New twerking effort
-                getNearbySaplings(e.getPlayer(), i);
+                getNearbySaplings(player, i);
             }
             if (!plantedTrees.values().contains(i)) {
                 // None, so return
@@ -225,12 +241,13 @@ public class TreeGrowListener implements Listener {
             twerkCount.putIfAbsent(i, 0);
             int count = twerkCount.get(i) + 1;
             twerkCount.put(i, count);
-            if (count == addon.getSettings().getMinimumTwerks()) {
-                e.getPlayer().playSound(e.getPlayer().getLocation(), addon.getSettings().getSoundsTwerkSound(),
+            if (count >= addon.getSettings().getMinimumTwerks()) {
+                player.playSound(player.getLocation(), addon.getSettings().getSoundsTwerkSound(),
                         (float)addon.getSettings().getSoundsTwerkVolume(), (float)addon.getSettings().getSoundsTwerkPitch());
-                e.getPlayer().spawnParticle(Particle.SPELL, e.getPlayer().getLocation(), 20, 3D, 0D, 3D);
+                player.spawnParticle(Particle.SPELL, player.getLocation(), 20, 3D, 0D, 3D);
             }
         });
+
     }
 
     private void getNearbySaplings(Player player, Island i) {
