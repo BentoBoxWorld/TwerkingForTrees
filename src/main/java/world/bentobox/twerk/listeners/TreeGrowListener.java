@@ -31,6 +31,7 @@ import org.bukkit.event.player.PlayerToggleSprintEvent;
 import org.bukkit.event.world.StructureGrowEvent;
 import org.eclipse.jdt.annotation.NonNull;
 
+import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.lists.Flags;
 import world.bentobox.bentobox.util.Util;
@@ -134,8 +135,9 @@ public class TreeGrowListener implements Listener {
             b.setType(Material.AIR);
 
             if (b.getWorld().generateTree(b.getLocation(), RAND, type,
-                    bs -> Flags.TREES_GROWING_OUTSIDE_RANGE.isSetForWorld(bs.getWorld())
-                            || addon.getIslands().getProtectedIslandAt(bs.getLocation()).isPresent())) {
+                    bs -> bs.getType() != Material.DIRT
+                            && (Flags.TREES_GROWING_OUTSIDE_RANGE.isSetForWorld(bs.getWorld())
+                                    || addon.getIslands().getProtectedIslandAt(bs.getLocation()).isPresent()))) {
                 if (addon.getSettings().isEffectsEnabled()) {
                     showSparkles(b);
                 }
