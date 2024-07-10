@@ -1,7 +1,6 @@
 package world.bentobox.twerk.listeners;
 
 import java.util.Arrays;
-
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.HashMap;
@@ -31,7 +30,8 @@ import org.bukkit.event.player.PlayerToggleSprintEvent;
 import org.bukkit.event.world.StructureGrowEvent;
 import org.eclipse.jdt.annotation.NonNull;
 
-import world.bentobox.bentobox.BentoBox;
+import com.google.common.base.Enums;
+
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.lists.Flags;
 import world.bentobox.bentobox.util.Util;
@@ -271,7 +271,13 @@ public class TreeGrowListener implements Listener {
             if (count >= addon.getSettings().getMinimumTwerks()) {
                 player.playSound(player.getLocation(), addon.getSettings().getSoundsTwerkSound(),
                         (float)addon.getSettings().getSoundsTwerkVolume(), (float)addon.getSettings().getSoundsTwerkPitch());
-                player.spawnParticle(Particle.SPELL, player.getLocation(), 20, 3D, 0D, 3D);
+                Particle p = Enums.getIfPresent(Particle.class, "SPELL").orNull();
+                if (p == null) {
+                    p = Enums.getIfPresent(Particle.class, "POOF").orNull();
+                }
+                if (p != null) {
+                    player.spawnParticle(p, player.getLocation(), 20, 3D, 0D, 3D);
+                }
             }
         });
 
