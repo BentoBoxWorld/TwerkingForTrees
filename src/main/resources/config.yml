@@ -1,5 +1,5 @@
 # TwerkingForTrees configuration file. {$version}
-# 
+#
 # How many times the player must twerk before the tree start growing faster.
 # If the player has not twerked enough, then the tree will not grow faster.
 minimum-twerks: 4
@@ -17,21 +17,21 @@ sounds:
     # Sound that plays when the player twerked enough for the sapling to start growing faster.
     # Available sounds are the following:
     #    https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Sound.html
-    sound: BLOCK_NOTE_BLOCK_BASS
+    sound: block.note_block.bass
     volume: 1.0
     pitch: 2.0
   growing-small-tree:
     # Sound that plays when a small tree (1x1) grows.
     # Available sounds are the following:
     #    https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Sound.html
-    sound: BLOCK_BUBBLE_COLUMN_UPWARDS_AMBIENT
+    sound: block.bubble_column.upwards_ambient
     volume: 1.0
     pitch: 1.0
   growing-big-tree:
     # Sound that plays when a big tree (2x2) grows.
     # Available sounds are the following:
     #    https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Sound.html
-    sound: BLOCK_BUBBLE_COLUMN_UPWARDS_AMBIENT
+    sound: block.bubble_column.upwards_ambient
     volume: 1.0
     pitch: 1.0
 effects:

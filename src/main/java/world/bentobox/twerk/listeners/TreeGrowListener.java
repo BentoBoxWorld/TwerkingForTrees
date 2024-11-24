@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
@@ -20,6 +21,7 @@ import org.bukkit.TreeType;
 import org.bukkit.World.Environment;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.BlockState;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -32,6 +34,7 @@ import org.eclipse.jdt.annotation.NonNull;
 
 import com.google.common.base.Enums;
 
+import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.lists.Flags;
 import world.bentobox.bentobox.util.Util;
@@ -132,24 +135,32 @@ public class TreeGrowListener implements Listener {
         }
         if (SAPLING_TO_TREE_TYPE.containsKey(t)) {
             TreeType type = SAPLING_TO_TREE_TYPE.getOrDefault(b.getType(), TreeType.TREE);
+            BentoBox.getInstance().logDebug("Setting " + b + " mat " + t + " to air");
             b.setType(Material.AIR);
-
-            if (b.getWorld().generateTree(b.getLocation(), RAND, type,
-                    bs -> bs.getType() != Material.DIRT
-                            && (Flags.TREES_GROWING_OUTSIDE_RANGE.isSetForWorld(bs.getWorld())
-                                    || addon.getIslands().getProtectedIslandAt(bs.getLocation()).isPresent()))) {
+            if (b.getWorld().generateTree(b.getLocation(), RAND, type, (Predicate<BlockState>) this::checkPlace)) {
                 if (addon.getSettings().isEffectsEnabled()) {
                     showSparkles(b);
                 }
                 if (addon.getSettings().isSoundsEnabled()) {
                     b.getWorld().playSound(b.getLocation(), addon.getSettings().getSoundsGrowingSmallTreeSound(),
-                            (float)addon.getSettings().getSoundsGrowingSmallTreeVolume(), (float)addon.getSettings().getSoundsGrowingSmallTreePitch());
+                            (float) addon.getSettings().getSoundsGrowingSmallTreeVolume(),
+                            (float) addon.getSettings().getSoundsGrowingSmallTreePitch());
                 }
             } else {
                 // Tree generation failed, so reset block
                 b.setType(t);
             }
         }
+    }
+
+    private Boolean checkPlace(BlockState bs) {
+        System.out.println("Not Dirt " + (bs.getType() != Material.DIRT));
+        System.out.println("Outside range flag set? " + Flags.TREES_GROWING_OUTSIDE_RANGE.isSetForWorld(bs.getWorld()));
+        System.out.println("Inside island? " + addon.getIslands().getProtectedIslandAt(bs.getLocation()).isPresent());
+        System.out.println("Overall = " + (bs.getType() != Material.DIRT && (Flags.TREES_GROWING_OUTSIDE_RANGE.isSetForWorld(bs.getWorld())
+                || addon.getIslands().getProtectedIslandAt(bs.getLocation()).isPresent())));
+        return bs.getType() != Material.DIRT && (Flags.TREES_GROWING_OUTSIDE_RANGE.isSetForWorld(bs.getWorld())
+                || addon.getIslands().getProtectedIslandAt(bs.getLocation()).isPresent());
     }
 
     protected boolean bigTreeSaplings(Block b) {
