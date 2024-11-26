@@ -33,28 +33,24 @@
     </issueManagement>
 
     <distributionManagement>
-        <snapshotRepository>
-            <id>codemc-snapshots</id>
-            <url>https://repo.codemc.org/repository/maven-snapshots</url>
-        </snapshotRepository>
-        <repository>
-            <id>codemc-releases</id>
-            <url>https://repo.codemc.org/repository/maven-releases</url>
+       <repository>
+            <id>bentoboxworld</id>
+            <url>https://repo.codemc.org/repository/bentoboxworld/</url>
         </repository>
     </distributionManagement>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <java.version>1.8</java.version>
+        <java.version>21</java.version>
         <powermock.version>2.0.4</powermock.version>
         <!-- More visible way how to change dependency versions -->
-        <spigot.version>1.20.6-R0.1-SNAPSHOT</spigot.version>
-        <bentobox.version>2.0.0-SNAPSHOT</bentobox.version>
+        <spigot.version>1.21.3-R0.1-SNAPSHOT</spigot.version>
+        <bentobox.version>2.7.1-SNAPSHOT</bentobox.version>
         <!-- Revision variable removes warning about dynamic version -->
         <revision>${build.version}-SNAPSHOT</revision>
         <!-- This allows to change between versions and snapshots. -->
-        <build.version>1.5.2</build.version>
+        <build.version>1.6.0</build.version>
         <build.number>-LOCAL</build.number>
         <sonar.organization>bentobox-world</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
@@ -128,6 +124,10 @@
         <repository>
             <id>spigot-repo</id>
             <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots</url>
+        </repository>
+        <repository>
+            <id>bentoboxworld</id>
+            <url>https://repo.codemc.org/repository/bentoboxworld/</url>
         </repository>
         <repository>
             <id>codemc-repo</id>
@@ -207,16 +207,47 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.7.0</version>
+                <version>3.8.0</version>
                 <configuration>
-                    <source>${java.version}</source>
-                    <target>${java.version}</target>
+                    <release>${java.version}</release>
                 </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.22.0</version>
+                <version>3.0.0-M5</version>
+                <configuration>
+                    <argLine>
+                        ${argLine}
+                        --add-opens java.base/java.lang=ALL-UNNAMED
+                        --add-opens java.base/java.math=ALL-UNNAMED
+                        --add-opens java.base/java.io=ALL-UNNAMED
+                        --add-opens java.base/java.util=ALL-UNNAMED
+                        --add-opens
+                        java.base/java.util.stream=ALL-UNNAMED
+                        --add-opens java.base/java.text=ALL-UNNAMED
+                        --add-opens
+                        java.base/java.util.regex=ALL-UNNAMED
+                        --add-opens
+                        java.base/java.nio.channels.spi=ALL-UNNAMED
+                        --add-opens java.base/sun.nio.ch=ALL-UNNAMED
+                        --add-opens java.base/java.net=ALL-UNNAMED
+                        --add-opens
+                        java.base/java.util.concurrent=ALL-UNNAMED
+                        --add-opens java.base/sun.nio.fs=ALL-UNNAMED
+                        --add-opens java.base/sun.nio.cs=ALL-UNNAMED
+                        --add-opens java.base/java.nio.file=ALL-UNNAMED
+                        --add-opens
+                        java.base/java.nio.charset=ALL-UNNAMED
+                        --add-opens
+                        java.base/java.lang.reflect=ALL-UNNAMED
+                        --add-opens
+                        java.logging/java.util.logging=ALL-UNNAMED
+                        --add-opens java.base/java.lang.ref=ALL-UNNAMED
+                        --add-opens java.base/java.util.jar=ALL-UNNAMED
+                        --add-opens java.base/java.util.zip=ALL-UNNAMED
+                    </argLine>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -226,19 +257,16 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>3.4.1</version>
+                <version>3.0.1</version>
                 <configuration>
-                    <source>${java.version}</source>
-                    <show>private</show>
-                    <quiet>true</quiet>
                     <failOnError>false</failOnError>
                     <additionalJOption>-Xdoclint:none</additionalJOption>
                     <javadocExecutable>${java.home}/bin/javadoc</javadocExecutable>
+                    <source>16</source>
                 </configuration>
                 <executions>
                     <execution>
                         <id>attach-javadocs</id>
-                        <phase>package</phase>
                         <goals>
                             <goal>jar</goal>
                         </goals>

@@ -2,7 +2,7 @@ name: TwerkingForTrees
 main: world.bentobox.twerk.TwerkingForTrees
 version: ${version}${build.number}
 icon: OAK_SAPLING
-api-version: 1.13
+api-version: 2.7.1
 
 prefix: TwerkingForTrees
 
