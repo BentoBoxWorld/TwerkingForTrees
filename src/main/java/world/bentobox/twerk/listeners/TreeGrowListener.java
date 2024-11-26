@@ -154,11 +154,6 @@ public class TreeGrowListener implements Listener {
     }
 
     private Boolean checkPlace(BlockState bs) {
-        System.out.println("Not Dirt " + (bs.getType() != Material.DIRT));
-        System.out.println("Outside range flag set? " + Flags.TREES_GROWING_OUTSIDE_RANGE.isSetForWorld(bs.getWorld()));
-        System.out.println("Inside island? " + addon.getIslands().getProtectedIslandAt(bs.getLocation()).isPresent());
-        System.out.println("Overall = " + (bs.getType() != Material.DIRT && (Flags.TREES_GROWING_OUTSIDE_RANGE.isSetForWorld(bs.getWorld())
-                || addon.getIslands().getProtectedIslandAt(bs.getLocation()).isPresent())));
         return bs.getType() != Material.DIRT && (Flags.TREES_GROWING_OUTSIDE_RANGE.isSetForWorld(bs.getWorld())
                 || addon.getIslands().getProtectedIslandAt(bs.getLocation()).isPresent());
     }
