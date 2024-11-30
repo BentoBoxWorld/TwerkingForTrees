@@ -72,11 +72,11 @@ public class TreeGrowListener implements Listener {
     }
     private static final Map<Material, TreeType> SAPLING_TO_BIG_TREE_TYPE;
     static {
-        Map<Material, TreeType> conv = new EnumMap<>(Material.class);
-        conv.put(Material.DARK_OAK_SAPLING, TreeType.DARK_OAK);
-        conv.put(Material.SPRUCE_SAPLING, TreeType.MEGA_REDWOOD);
-        conv.put(Material.JUNGLE_SAPLING, TreeType.JUNGLE);
-        SAPLING_TO_BIG_TREE_TYPE = Collections.unmodifiableMap(conv);
+        Map<Material, TreeType> conv2 = new EnumMap<>(Material.class);
+        conv2.put(Material.DARK_OAK_SAPLING, TreeType.DARK_OAK);
+        conv2.put(Material.SPRUCE_SAPLING, TreeType.MEGA_REDWOOD);
+        conv2.put(Material.JUNGLE_SAPLING, TreeType.JUNGLE);
+        SAPLING_TO_BIG_TREE_TYPE = Collections.unmodifiableMap(conv2);
     }
 
     private static final Random RAND = new Random();
@@ -135,7 +135,6 @@ public class TreeGrowListener implements Listener {
         }
         if (SAPLING_TO_TREE_TYPE.containsKey(t)) {
             TreeType type = SAPLING_TO_TREE_TYPE.getOrDefault(b.getType(), TreeType.TREE);
-            BentoBox.getInstance().logDebug("Setting " + b + " mat " + t + " to air");
             b.setType(Material.AIR);
             if (b.getWorld().generateTree(b.getLocation(), RAND, type, (Predicate<BlockState>) this::checkPlace)) {
                 if (addon.getSettings().isEffectsEnabled()) {
