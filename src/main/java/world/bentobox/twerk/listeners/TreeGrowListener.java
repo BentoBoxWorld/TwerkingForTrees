@@ -34,7 +34,6 @@ import org.eclipse.jdt.annotation.NonNull;
 
 import com.google.common.base.Enums;
 
-import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.lists.Flags;
 import world.bentobox.bentobox.util.Util;
@@ -76,6 +75,7 @@ public class TreeGrowListener implements Listener {
         conv2.put(Material.DARK_OAK_SAPLING, TreeType.DARK_OAK);
         conv2.put(Material.SPRUCE_SAPLING, TreeType.MEGA_REDWOOD);
         conv2.put(Material.JUNGLE_SAPLING, TreeType.JUNGLE);
+        conv2.put(Material.PALE_OAK_SAPLING, TreeType.PALE_OAK);
         SAPLING_TO_BIG_TREE_TYPE = Collections.unmodifiableMap(conv2);
     }
 
