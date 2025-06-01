@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
@@ -136,7 +135,7 @@ public class TreeGrowListener implements Listener {
         if (SAPLING_TO_TREE_TYPE.containsKey(t)) {
             TreeType type = SAPLING_TO_TREE_TYPE.getOrDefault(b.getType(), TreeType.TREE);
             b.setType(Material.AIR);
-            if (b.getWorld().generateTree(b.getLocation(), RAND, type, (Predicate<BlockState>) this::checkPlace)) {
+            if (checkPlace(b.getState()) && b.getWorld().generateTree(b.getLocation(), RAND, type)) {
                 if (addon.getSettings().isEffectsEnabled()) {
                     showSparkles(b);
                 }
@@ -186,9 +185,11 @@ public class TreeGrowListener implements Listener {
     }
 
     private boolean generateBigTree(Block b, Location location, TreeType type) {
-        return b.getWorld().generateTree(location, RAND, type,
-                bs -> Flags.TREES_GROWING_OUTSIDE_RANGE.isSetForWorld(bs.getWorld())
-                        || addon.getIslands().getProtectedIslandAt(bs.getLocation()).isPresent());
+        if (!Flags.TREES_GROWING_OUTSIDE_RANGE.isSetForWorld(b.getWorld())
+                && addon.getIslands().getProtectedIslandAt(b.getLocation()).isEmpty()) {
+            return false;
+        }
+        return b.getWorld().generateTree(location, RAND, type);
     }
 
     private void playBigTreeEffectsAndSounds(Block b) {
