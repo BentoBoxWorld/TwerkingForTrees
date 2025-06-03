@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
@@ -34,7 +33,6 @@ import org.eclipse.jdt.annotation.NonNull;
 
 import com.google.common.base.Enums;
 
-import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.lists.Flags;
 import world.bentobox.bentobox.util.Util;
@@ -67,7 +65,6 @@ public class TreeGrowListener implements Listener {
         conv.put(Material.FLOWERING_AZALEA, TreeType.AZALEA);
         conv.put(Material.MANGROVE_PROPAGULE, TreeType.MANGROVE);
         conv.put(Material.CHERRY_SAPLING, TreeType.CHERRY);
-        conv.put(Material.DARK_OAK_SAPLING, TreeType.DARK_OAK);
         SAPLING_TO_TREE_TYPE = Collections.unmodifiableMap(conv);
     }
     private static final Map<Material, TreeType> SAPLING_TO_BIG_TREE_TYPE;
@@ -76,6 +73,7 @@ public class TreeGrowListener implements Listener {
         conv2.put(Material.DARK_OAK_SAPLING, TreeType.DARK_OAK);
         conv2.put(Material.SPRUCE_SAPLING, TreeType.MEGA_REDWOOD);
         conv2.put(Material.JUNGLE_SAPLING, TreeType.JUNGLE);
+        conv2.put(Material.PALE_OAK_SAPLING, TreeType.PALE_OAK);
         SAPLING_TO_BIG_TREE_TYPE = Collections.unmodifiableMap(conv2);
     }
 
@@ -136,7 +134,7 @@ public class TreeGrowListener implements Listener {
         if (SAPLING_TO_TREE_TYPE.containsKey(t)) {
             TreeType type = SAPLING_TO_TREE_TYPE.getOrDefault(b.getType(), TreeType.TREE);
             b.setType(Material.AIR);
-            if (b.getWorld().generateTree(b.getLocation(), RAND, type, (Predicate<BlockState>) this::checkPlace)) {
+            if (checkPlace(b.getState()) && b.getWorld().generateTree(b.getLocation(), RAND, type)) {
                 if (addon.getSettings().isEffectsEnabled()) {
                     showSparkles(b);
                 }
@@ -186,9 +184,11 @@ public class TreeGrowListener implements Listener {
     }
 
     private boolean generateBigTree(Block b, Location location, TreeType type) {
-        return b.getWorld().generateTree(location, RAND, type,
-                bs -> Flags.TREES_GROWING_OUTSIDE_RANGE.isSetForWorld(bs.getWorld())
-                        || addon.getIslands().getProtectedIslandAt(bs.getLocation()).isPresent());
+        if (!Flags.TREES_GROWING_OUTSIDE_RANGE.isSetForWorld(b.getWorld())
+                && addon.getIslands().getProtectedIslandAt(b.getLocation()).isEmpty()) {
+            return false;
+        }
+        return b.getWorld().generateTree(location, RAND, type);
     }
 
     private void playBigTreeEffectsAndSounds(Block b) {
