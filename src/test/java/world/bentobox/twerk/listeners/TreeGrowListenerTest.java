@@ -1,5 +1,15 @@
 package world.bentobox.twerk.listeners;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.lang.reflect.Method;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -9,32 +19,21 @@ import org.junit.jupiter.api.Test;
 class TreeGrowListenerTest {
 
     @Test
-    void testListenerClassExists() {
-        // Verify the listener class can be loaded
-        Class<TreeGrowListener> clazz = TreeGrowListener.class;
-        assert (clazz != null);
-        assert (clazz.getName().equals("world.bentobox.twerk.listeners.TreeGrowListener"));
+    void testListenerImplementsBukkitListener() {
+        assertTrue(Listener.class.isAssignableFrom(TreeGrowListener.class),
+                "TreeGrowListener must implement org.bukkit.event.Listener");
     }
 
     @Test
     void testListenerHasRequiredEventHandlers() {
-        // Verify all event handler methods exist
-        assert (TreeGrowListener.class.getDeclaredMethods().length > 0);
-
-        boolean hasOnTwerk = java.util.Arrays.stream(TreeGrowListener.class.getDeclaredMethods())
-                .anyMatch(m -> m.getName().equals("onTwerk"));
-        assert (hasOnTwerk) : "Missing onTwerk method";
-
-        boolean hasOnSprint = java.util.Arrays.stream(TreeGrowListener.class.getDeclaredMethods())
-                .anyMatch(m -> m.getName().equals("onSprint"));
-        assert (hasOnSprint) : "Missing onSprint method";
-
-        boolean hasOnTreeBreak = java.util.Arrays.stream(TreeGrowListener.class.getDeclaredMethods())
-                .anyMatch(m -> m.getName().equals("onTreeBreak"));
-        assert (hasOnTreeBreak) : "Missing onTreeBreak method";
-
-        boolean hasOnTreeGrow = java.util.Arrays.stream(TreeGrowListener.class.getDeclaredMethods())
-                .anyMatch(m -> m.getName().equals("onTreeGrow"));
-        assert (hasOnTreeGrow) : "Missing onTreeGrow method";
+        Set<String> handlers = Stream.of(TreeGrowListener.class.getDeclaredMethods())
+                .filter(m -> m.isAnnotationPresent(EventHandler.class))
+                .map(Method::getName)
+                .collect(Collectors.toSet());
+        assertTrue(handlers.contains("onTwerk"), "Missing onTwerk @EventHandler");
+        assertTrue(handlers.contains("onSprint"), "Missing onSprint @EventHandler");
+        assertTrue(handlers.contains("onTreeBreak"), "Missing onTreeBreak @EventHandler");
+        assertTrue(handlers.contains("onTreeGrow"), "Missing onTreeGrow @EventHandler");
+        assertEquals(4, handlers.size(), "Expected exactly 4 @EventHandler methods");
     }
 }

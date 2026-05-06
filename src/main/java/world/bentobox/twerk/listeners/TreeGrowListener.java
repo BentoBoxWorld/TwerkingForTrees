@@ -133,8 +133,11 @@ public class TreeGrowListener implements Listener {
         }
         if (SAPLING_TO_TREE_TYPE.containsKey(t)) {
             TreeType type = SAPLING_TO_TREE_TYPE.getOrDefault(b.getType(), TreeType.TREE);
+            BlockState state = b.getState();
             b.setType(Material.AIR);
-            if (checkPlace(b.getState()) && b.getWorld().generateTree(b.getLocation(), RAND, type)) {
+            boolean canPlace = checkPlace(state);
+            boolean grew = canPlace && b.getWorld().generateTree(b.getLocation(), RAND, type);
+            if (grew) {
                 if (addon.getSettings().isEffectsEnabled()) {
                     showSparkles(b);
                 }
@@ -150,7 +153,7 @@ public class TreeGrowListener implements Listener {
         }
     }
 
-    private Boolean checkPlace(BlockState bs) {
+    private boolean checkPlace(BlockState bs) {
         return bs.getType() != Material.DIRT && (Flags.TREES_GROWING_OUTSIDE_RANGE.isSetForWorld(bs.getWorld())
                 || addon.getIslands().getProtectedIslandAt(bs.getLocation()).isPresent());
     }

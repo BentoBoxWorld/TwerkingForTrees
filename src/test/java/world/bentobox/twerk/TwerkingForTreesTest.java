@@ -19,7 +19,6 @@ import org.bukkit.Sound;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
@@ -176,8 +175,14 @@ class TwerkingForTreesTest extends CommonTestSetup {
     }
 
     @Test
-    void testStateAfterSuccessfulLoad() {
+    void testOnLoadGrowingSoundDefaults() {
         addon.onLoad();
-        assertNotNull(addon.getSettings());
+        Settings s = addon.getSettings();
+        assertEquals(Sound.BLOCK_BUBBLE_COLUMN_UPWARDS_AMBIENT, s.getSoundsGrowingSmallTreeSound());
+        assertEquals(1.0, s.getSoundsGrowingSmallTreeVolume());
+        assertEquals(1.0, s.getSoundsGrowingSmallTreePitch());
+        assertEquals(Sound.BLOCK_BUBBLE_COLUMN_UPWARDS_AMBIENT, s.getSoundsGrowingBigTreeSound());
+        assertEquals(1.0, s.getSoundsGrowingBigTreeVolume());
+        assertEquals(1.0, s.getSoundsGrowingBigTreePitch());
     }
 }
