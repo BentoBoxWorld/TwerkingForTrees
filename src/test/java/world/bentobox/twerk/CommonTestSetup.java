@@ -215,7 +215,9 @@ public abstract class CommonTestSetup {
 
     protected static void deleteAll(File file) throws IOException {
         if (file.exists()) {
-            Files.walk(file.toPath()).sorted(Comparator.reverseOrder()).map(Path::toFile).forEach(File::delete);
+            try (var stream = Files.walk(file.toPath())) {
+                stream.sorted(Comparator.reverseOrder()).map(Path::toFile).forEach(File::delete);
+            }
         }
     }
 }
