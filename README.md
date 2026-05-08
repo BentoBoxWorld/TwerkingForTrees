@@ -55,7 +55,7 @@ Works with all major BentoBox gamemodes:
 - SkyGrid
 - CaveBlock
 
-**Requires:** Java 21, Spigot/Paper 1.21.3+, BentoBox 2.7.1+
+**Requires:** Java 21, Paper 1.21.3+, BentoBox 3.14.0+
 
 ## Permissions
 
