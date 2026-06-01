@@ -17,6 +17,7 @@ That's it. No bone meal needed. Just vibes.
 
 - **All tree types supported** — Oak, Birch, Spruce, Jungle, Acacia, Dark Oak, Azalea, Mangrove, Cherry, and Pale Oak
 - **Mega tree support** — Place saplings in a 2x2 grid for Dark Oak, Jungle, Spruce, and Pale Oak mega trees, then twerk them into existence
+  - **Note:** Dark Oak and Pale Oak are 2x2-only trees, just like in vanilla Minecraft. A single Dark Oak or Pale Oak sapling will not grow on its own — you must arrange four in a 2x2 grid.
 - **Customizable sounds & particles** — Configure the twerk sound, tree growth sounds, and visual effects to your liking
 - **Configurable twerk threshold** — Set how many twerks are required before growth kicks in (default: 4)
 - **Adjustable range** — Control how far from the player saplings are detected (default: 5 blocks in all directions)
