@@ -34,7 +34,6 @@ import org.eclipse.jdt.annotation.NonNull;
 
 import com.google.common.base.Enums;
 
-import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.lists.Flags;
 import world.bentobox.bentobox.util.Util;
@@ -67,16 +66,16 @@ public class TreeGrowListener implements Listener {
         conv.put(Material.FLOWERING_AZALEA, TreeType.AZALEA);
         conv.put(Material.MANGROVE_PROPAGULE, TreeType.MANGROVE);
         conv.put(Material.CHERRY_SAPLING, TreeType.CHERRY);
-        conv.put(Material.DARK_OAK_SAPLING, TreeType.DARK_OAK);
         SAPLING_TO_TREE_TYPE = Collections.unmodifiableMap(conv);
     }
     private static final Map<Material, TreeType> SAPLING_TO_BIG_TREE_TYPE;
     static {
-        Map<Material, TreeType> conv = new EnumMap<>(Material.class);
-        conv.put(Material.DARK_OAK_SAPLING, TreeType.DARK_OAK);
-        conv.put(Material.SPRUCE_SAPLING, TreeType.MEGA_REDWOOD);
-        conv.put(Material.JUNGLE_SAPLING, TreeType.JUNGLE);
-        SAPLING_TO_BIG_TREE_TYPE = Collections.unmodifiableMap(conv);
+        Map<Material, TreeType> conv2 = new EnumMap<>(Material.class);
+        conv2.put(Material.DARK_OAK_SAPLING, TreeType.DARK_OAK);
+        conv2.put(Material.SPRUCE_SAPLING, TreeType.MEGA_REDWOOD);
+        conv2.put(Material.JUNGLE_SAPLING, TreeType.JUNGLE);
+        conv2.put(Material.PALE_OAK_SAPLING, TreeType.PALE_OAK);
+        SAPLING_TO_BIG_TREE_TYPE = Collections.unmodifiableMap(conv2);
     }
 
     private static final Random RAND = new Random();
@@ -135,7 +134,6 @@ public class TreeGrowListener implements Listener {
         }
         if (SAPLING_TO_TREE_TYPE.containsKey(t)) {
             TreeType type = SAPLING_TO_TREE_TYPE.getOrDefault(b.getType(), TreeType.TREE);
-            BentoBox.getInstance().logDebug("Setting " + b + " mat " + t + " to air");
             b.setType(Material.AIR);
             if (b.getWorld().generateTree(b.getLocation(), RAND, type, (Predicate<BlockState>) this::checkPlace)) {
                 if (addon.getSettings().isEffectsEnabled()) {
@@ -153,12 +151,7 @@ public class TreeGrowListener implements Listener {
         }
     }
 
-    private Boolean checkPlace(BlockState bs) {
-        System.out.println("Not Dirt " + (bs.getType() != Material.DIRT));
-        System.out.println("Outside range flag set? " + Flags.TREES_GROWING_OUTSIDE_RANGE.isSetForWorld(bs.getWorld()));
-        System.out.println("Inside island? " + addon.getIslands().getProtectedIslandAt(bs.getLocation()).isPresent());
-        System.out.println("Overall = " + (bs.getType() != Material.DIRT && (Flags.TREES_GROWING_OUTSIDE_RANGE.isSetForWorld(bs.getWorld())
-                || addon.getIslands().getProtectedIslandAt(bs.getLocation()).isPresent())));
+    private boolean checkPlace(BlockState bs) {
         return bs.getType() != Material.DIRT && (Flags.TREES_GROWING_OUTSIDE_RANGE.isSetForWorld(bs.getWorld())
                 || addon.getIslands().getProtectedIslandAt(bs.getLocation()).isPresent());
     }
