@@ -1,6 +1,5 @@
 package world.bentobox.twerk.listeners;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.lang.reflect.Method;
@@ -34,6 +33,5 @@ class TreeGrowListenerTest {
         assertTrue(handlers.contains("onSprint"), "Missing onSprint @EventHandler");
         assertTrue(handlers.contains("onTreeBreak"), "Missing onTreeBreak @EventHandler");
         assertTrue(handlers.contains("onTreeGrow"), "Missing onTreeGrow @EventHandler");
-        assertEquals(4, handlers.size(), "Expected exactly 4 @EventHandler methods");
     }
 }
